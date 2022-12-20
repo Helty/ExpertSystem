@@ -1,19 +1,16 @@
-﻿<Window x:Class="ExpertSystem.MainWindow"
+﻿<Window x:Name="ExpertSystemMainWindow" x:Class="ExpertSystem.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ExpertSystem"
         mc:Ignorable="d"
-        Title="MainWindow" Height="518" Width="664">
-    <Grid RenderTransformOrigin="0.5,0.5">
-        <Grid.RenderTransform>
-            <TransformGroup>
-                <ScaleTransform/>
-                <SkewTransform/>
-                <RotateTransform Angle="0.059"/>
-                <TranslateTransform/>
-            </TransformGroup>
-        </Grid.RenderTransform>
+        Title="MainWindow" Height="947" Width="1722" ResizeMode="NoResize">
+    <Grid>
+        <Button x:Name="StartConsultationButton" Content="Запустить консультацию" HorizontalAlignment="Left" Margin="740,812,0,0" VerticalAlignment="Top" Height="38" Width="210" RenderTransformOrigin="0.171,0.58"/>
+        <Button x:Name="ShowLogicResultButton" Content="Посмотреть пояснение результата" HorizontalAlignment="Left" Margin="740,855,0,0" VerticalAlignment="Top" Height="40" Width="210"/>
+        <Border BorderBrush="Black" BorderThickness="1" Margin="0,0,1150,0"/>
+        <Border BorderBrush="Black" BorderThickness="1" Margin="1150,0,0,0"/>
+        <Border BorderBrush="Black" BorderThickness="1" Margin="572,0,572,124"/>
     </Grid>
 </Window>

@@ -1,26 +1,30 @@
 ﻿using ExpertSystem.common;
-using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Documents;
-using System.Xml.Linq;
 
 namespace ExpertSystem.domain
 {
     public class ExpertSystem
     {
-        private OrderedDictionary<string, ValueDomain> m_valueDomains = new OrderedDictionary<string, ValueDomain>();
-        private OrderedDictionary<string, Variable> m_variables = new OrderedDictionary<string, Variable>();
-        private OrderedDictionary<string, Rule> m_rules = new OrderedDictionary<string, Rule>();
+        private OrderedDictionary<string, Domain> m_valueDomains;
+        private OrderedDictionary<string, Variable> m_variables;
+        private OrderedDictionary<string, Rule> m_rules;
 
-        private Variable m_goal;
+        private List<Fact> m_provedFacts;
+        private List<Rule> m_workedRules;
 
-        private List<Fact> m_provedFacts = new();
-        private List<Rule> m_workedRules = new();
-        public string m_result = "";
+        private readonly Variable m_goal;
+
+        public ExpertSystem()
+        {
+            m_valueDomains = new OrderedDictionary<string, Domain>();
+            m_variables = new OrderedDictionary<string, Variable>();
+            m_rules = new OrderedDictionary<string, Rule>();
+
+            m_provedFacts = new List<Fact>();
+            m_workedRules = new List<Rule>();
+
+            m_goal = new Variable();
+        }
 
         public List<Rule> GetWorkedRules()
         {
@@ -31,11 +35,11 @@ namespace ExpertSystem.domain
             return m_provedFacts;
         }
 
-        public OrderedDictionary<string, ValueDomain> GetValueDomains()
+        public OrderedDictionary<string, Domain> GetValueDomains()
         {
             return m_valueDomains;
         }
-        public void SetValueDomains(OrderedDictionary<string, ValueDomain> newValueDomains)
+        public void SetValueDomains(OrderedDictionary<string, Domain> newValueDomains)
         {
             if (newValueDomains != m_valueDomains)
             {
@@ -80,92 +84,84 @@ namespace ExpertSystem.domain
             return Consult(m_goal);
         }
 
-        public RightlyType DoRule(Rule rule)
+        public RightlyType CheckRule(Rule rule)
         {
             bool isFactTrue = true;
+
             foreach (Fact reasonFact in rule.GetReasons())
             {
-                if (!Fact.ContainsIn(reasonFact, m_provedFacts.ToArray()))
+                if (!Fact.ContainsIn(reasonFact, m_provedFacts))
                 {
                     Fact fact = Consult(reasonFact.GetVariable());
                     m_provedFacts.Add(fact);
 
-                    isFactTrue = (fact.GetRightlyType() == RightlyType.Yes) 
-                        ? (reasonFact.CompareTo(fact) == 0) 
-                        : false;
+                    isFactTrue = (fact.GetRightlyType() == RightlyType.Yes) && (reasonFact.CompareTo(fact) == 0);
 
-                    foreach (string s in fact.GetVariable().GetDomainValue().GetValueList())
+                    foreach (string value in fact.GetVariable().GetDomain().GetValueList())
                     {
-                        if (s != fact.GetWeight())
+                        if (value != fact.GetValue())
                         {
-                            m_provedFacts.Add(new Fact(fact.GetVariable(), s, RightlyType.No));
+                            m_provedFacts.Add(new Fact(fact.GetVariable(), value, RightlyType.No));
                         }
                     }
-
-                    if (!isFactTrue) break;
                 }
                 else
                 {
-
-                    isFactTrue = (Fact.GetFromMas(reasonFact, m_provedFacts.ToArray()).GetRightlyType() == RightlyType.Yes);
-                    if (!isFactTrue) break;
+                    Fact? fact = Fact.GetFromList(reasonFact, m_provedFacts);
+                    isFactTrue = (fact != null && fact.GetRightlyType() == RightlyType.Yes);
                 }
+
+                if (!isFactTrue) break;
             }
 
-            if (isFactTrue) // если все верно - делаем вывод
+            if (isFactTrue)
             {
-                if (rule.GetResult() == null || !rule.GetResult().GetVariable().GetDomainValue().GetValueList().Contains(rule.GetResult().GetWeight()))
+                Fact fact = rule.GetResult();
+
+                if (fact == null || !fact.GetVariable().GetDomain().GetValueList().Contains(fact.GetValue()))
                 {
                     throw new DomainException("Правило " + rule.GetName() + " пытается присвоить значение не из домена!");
                 }
-                rule.GetResult().SetRightlyType(RightlyType.Yes);
-                m_provedFacts.Add(rule.GetResult());
-                rule.m_worked = RuleWorkType.Signifi;
+
+                rule.SetWorkedType(RuleWorkType.Signifi);
                 m_workedRules.Add(rule);
+
+                fact.SetRightlyType(RightlyType.Yes);
+                m_provedFacts.Add(fact);
+
                 return RightlyType.Yes;
             }
-            else
-            {
-                rule.SetWorkedType(RuleWorkType.Unsignify);
-                return RightlyType.Unknown;
-            }
+
+            rule.SetWorkedType(RuleWorkType.Unsignify);
+            m_workedRules.Add(rule);
+
+            return RightlyType.Unknown;
         }
 
         private Fact Consult(Variable goal)
         {
-            if (goal.GetDomainValue() == null)
+            if (goal.GetDomain() == null)
             {
                 throw new DomainException("У переменной \"" + goal.GetName() + "\" неизвестен домен!");
             }
-            if (goal.GetDomainValue().GetValueList().Count == 0)
+
+            if (goal.GetDomain().GetValueList().Count == 0)
             {
-                throw new DomainException("Домен \"" + goal.GetDomainValue().GetName() + "\" не имеет значений!");
+                throw new DomainException("Домен \"" + goal.GetDomain().GetName() + "\" не имеет значений!");
             }
 
-            if (goal.GetVariableType() == VariableType.Queried)
+            foreach (string ruleKey in m_rules.GetKeys())
             {
-            }
-            else
-            {
-                foreach (string s in m_rules.GetKeys()) // если выводимая
+                Fact ruleResult = m_rules[ruleKey].GetResult();
+
+                if (ruleResult != null && ruleResult.GetVariable().CompareTo(goal) == 0)
                 {
-                    if (m_rules[s].GetResult() != null && m_rules[s].GetResult().GetVariable().CompareTo(goal) == 0)
-                    {
-                        switch (DoRule(m_rules[s]))
-                        {
-                            case RightlyType.Unknown:
-                                if (goal.GetVariableType() == VariableType.DeductionQueried) // выводимо-запрашиваемая
-                                {
-                                }
-                                continue;
-                            default:
-                                return m_rules[s].GetResult();
-                        }
-                    }
+                    if (CheckRule(m_rules[ruleKey]) == RightlyType.Unknown) continue;
+                    return m_rules[ruleKey].GetResult();
                 }
             }
 
-            return new Fact(goal, goal.GetDomainValue().GetValue(0), RightlyType.Unknown);
+            return new Fact(goal, goal.GetDomain().GetValue(0), RightlyType.Unknown);
         }
     }
 }

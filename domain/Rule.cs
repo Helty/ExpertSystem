@@ -6,32 +6,27 @@ namespace ExpertSystem.domain
 {
     public class Rule
     {
-        private List<Fact> m_reasons = new();
-        public RuleWorkType m_worked;
+        private string m_name;
+        private string m_argumentation;
 
-        public string? m_name;
-        public Fact? m_result;
-        public string? m_reasoning;
+        private List<Fact> m_reasons;
+        private Fact m_result;
+        private RuleWorkType m_workType;
 
-        #region Конструктор
-        public Rule(string name)
+        public Rule()
         {
-            m_name = name;
-            m_worked = RuleWorkType.No;
+            m_name = string.Empty;
+            m_argumentation = string.Empty;
+            m_reasons = new List<Fact>();
+            m_result = new Fact();
+            m_workType = RuleWorkType.No;
         }
-
-        public Rule(Fact reason, Fact result)
-        {
-            m_reasons.Add(reason);
-            m_result = result;
-            m_worked = RuleWorkType.No;
-        }
-        #endregion
 
         public List<Fact> GetReasons()
         {
             return m_reasons;
         }
+
         public void SetReasons(List<Fact> newReasons)
         {
             if (newReasons != m_reasons)
@@ -42,20 +37,22 @@ namespace ExpertSystem.domain
 
         public RuleWorkType GetWorkedType()
         {
-            return m_worked;
+            return m_workType;
         }
+
         public void SetWorkedType(RuleWorkType newWorkedType)
         {
-            if (newWorkedType != m_worked)
+            if (newWorkedType != m_workType)
             {
-                m_worked = newWorkedType;
+                m_workType = newWorkedType;
             }
         }
 
-        public string? GetName()
+        public string GetName()
         {
             return m_name;
         }
+
         public void SetName(string newName)
         {
             if (newName != m_name)
@@ -68,6 +65,7 @@ namespace ExpertSystem.domain
         {
             return m_result;
         }
+
         public void SetResult(Fact newResult)
         {
             if (newResult != m_result)
@@ -76,15 +74,16 @@ namespace ExpertSystem.domain
             }
         }
 
-        public string? GetReasoning()
+        public string GetArgumentation()
         {
-            return m_reasoning;
+            return m_argumentation;
         }
-        public void SetReasoning(string newReasoning)
+
+        public void SetArgumentation(string newArgumentation)
         {
-            if (newReasoning != m_reasoning)
+            if (newArgumentation != m_argumentation)
             {
-                m_reasoning = newReasoning;
+                m_argumentation = newArgumentation;
             }
         }
 
@@ -142,6 +141,7 @@ namespace ExpertSystem.domain
             }
             m_reasons[newPosition] = oldReason;
         }
+
         public void Move(Fact fact, int newPosition)
         {
             if (!Contains(fact))
@@ -165,6 +165,7 @@ namespace ExpertSystem.domain
 
             m_reasons.RemoveAt(position);
         }
+
         public void Remove(Fact fact)
         {
             if (!Contains(fact))

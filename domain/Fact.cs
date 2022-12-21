@@ -13,25 +13,28 @@ namespace ExpertSystem.domain
     public class Fact
     {
         private Variable m_variable;
-        private string m_weight;
-        private RightlyType m_trulyType;
+        private string m_value;
+        private RightlyType m_rightlyType;
 
-        public Fact(Variable variable, string weight)
+        public Fact()
+        {
+            m_variable = new Variable();
+            m_value = string.Empty;
+            m_rightlyType = RightlyType.Unknown;
+        }
+
+        public Fact(Variable variable, string value, RightlyType rightlyType)
         {
             m_variable = variable;
-            m_weight = weight;
-            m_trulyType = RightlyType.Unknown;
-        }
-        public Fact(Variable variable, string weight, RightlyType trulyType)
-            : this(variable, weight)
-        {
-            m_trulyType = trulyType;
+            m_value = value;
+            m_rightlyType = rightlyType;
         }
 
         public Variable GetVariable()
         {
             return m_variable;
         }
+
         public void SetVariable(Variable newVariable)
         {
             if (newVariable != m_variable)
@@ -40,38 +43,40 @@ namespace ExpertSystem.domain
             }
         }
 
-        public string GetWeight()
+        public string GetValue()
         {
-            return m_weight;
+            return m_value;
         }
-        public void SetWeight(string newWeight)
+
+        public void SetValue(string newValue)
         {
-            if (newWeight != m_weight)
+            if (newValue != m_value)
             {
-                if (!m_variable.GetDomainValue().InDomain(newWeight))
+                if (!m_variable.GetDomain().IsExistValue(m_value))
                 {
                     throw new DomainException("Попытка присвоить переменной значение не из ее домена");
                 }
-                m_weight = newWeight;
-                m_trulyType = RightlyType.Unknown;
+                m_value = newValue;
+                m_rightlyType = RightlyType.Unknown;
             }
         }
 
         public RightlyType GetRightlyType()
         {
-            return m_trulyType;
+            return m_rightlyType;
         }
+
         public void SetRightlyType(RightlyType newTrulyType)
         {
-            if (newTrulyType != m_trulyType)
+            if (newTrulyType != m_rightlyType)
             {
-                m_trulyType = newTrulyType;
+                m_rightlyType = newTrulyType;
             }
         }
 
         public override string ToString()
         {
-            return m_variable.GetName() + " = " + m_weight;
+            return m_variable.GetName() + " = " + m_value;
         }
 
         public int CompareTo(Fact fact)
@@ -80,10 +85,10 @@ namespace ExpertSystem.domain
 
             return isCompareVariable != 0 
                 ? isCompareVariable 
-                : m_weight.CompareTo(fact.GetWeight());
+                : m_value.CompareTo(fact.GetValue());
         }
 
-        internal static bool ContainsIn(Fact fact, Fact[] facts)
+        internal static bool ContainsIn(Fact fact, List<Fact> facts)
         {
             foreach (Fact sameFact in facts)
             {
@@ -95,7 +100,7 @@ namespace ExpertSystem.domain
             return false;
         }
 
-        internal static Fact GetFromMas(Fact fact, Fact[] facts)
+        internal static Fact? GetFromList(Fact fact, List<Fact> facts)
         {
             foreach (Fact sameFact in facts)
             {

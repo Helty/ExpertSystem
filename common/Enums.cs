@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace ExpertSystem.common
 {
-    [Serializable]
     public enum RuleWorkType
     {
         No,
@@ -14,7 +13,6 @@ namespace ExpertSystem.common
         Unsignify
     }
 
-    [Serializable]
     public enum RightlyType
     {
         Unknown = 1,
@@ -22,11 +20,9 @@ namespace ExpertSystem.common
         No
     }
 
-    [Serializable]
     public enum VariableType
     {
         Deducted,
         Queried,
-        DeductionQueried
     }
 }

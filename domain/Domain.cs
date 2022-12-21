@@ -4,25 +4,22 @@ using ExpertSystem.common;
 
 namespace ExpertSystem.domain
 {
-    public class ValueDomain
+    public class Domain
     {
-        private List<string> m_valueList = new();
-        private string m_name = "No_name";
+        private string m_name;
+        private List<string> m_valueList;
 
-        #region Конструктор
-        public ValueDomain()
+        public Domain()
         {
+            m_name = string.Empty;
+            m_valueList = new List<string>();
         }
-        public ValueDomain(string name)
-        {
-            m_name = name;
-        }
-        #endregion
 
         public List<string> GetValueList()
         {
             return m_valueList;
         }
+
         public void SetValueList(List<string> newValueList)
         {
             if (newValueList != m_valueList)
@@ -40,6 +37,7 @@ namespace ExpertSystem.domain
         {
             return m_name;
         }
+
         public void SetName(string newName)
         {
             if (newName != m_name)
@@ -125,7 +123,7 @@ namespace ExpertSystem.domain
             m_valueList.Remove(value);
         }
 
-        public bool InDomain(string value)
+        public bool IsExistValue(string value)
         {
             return m_valueList.Contains(value);
         }

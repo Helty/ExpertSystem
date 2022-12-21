@@ -5,29 +5,24 @@ namespace ExpertSystem.domain
 {
     public class Variable
     {
-        protected string m_name;
-        protected ValueDomain? m_domainValue;
-        protected VariableType m_variableType;
-        protected string? m_question;
-        protected string? m_reasoning;
+        private string m_name;
+        private Domain m_domain;
+        private VariableType m_variableType;
+        private string m_question;
 
-        #region Конструктор
-        public Variable(string name)
+        public Variable()
         {
-            m_name = name;
+            m_name = string.Empty;
+            m_domain =  new Domain();
+            m_variableType = VariableType.Queried;
+            m_question = string.Empty;
         }
-
-        public Variable(string name, ValueDomain domain)
-        {
-            m_name = name;
-            m_domainValue = domain;
-        }
-        #endregion
 
         public string GetName()
         {
             return m_name;
         }
+
         public void SetName(string newName)
         {
             if (newName != m_name)
@@ -36,15 +31,16 @@ namespace ExpertSystem.domain
             }
         }
 
-        public ValueDomain GetDomainValue()
+        public Domain GetDomain()
         {
-            return m_domainValue!;
+            return m_domain;
         }
-        public void SetDomainValue(ValueDomain newDomainValues)
+
+        public void SetDomain(Domain newDomain)
         {
-            if (newDomainValues != m_domainValue)
+            if (newDomain != m_domain)
             {
-                m_domainValue = newDomainValues;
+                m_domain = newDomain;
             }
         }
 
@@ -52,6 +48,7 @@ namespace ExpertSystem.domain
         {
             return m_variableType;
         }
+
         public void SetVariableType(VariableType newVariableType)
         {
             if (newVariableType != m_variableType)
@@ -64,23 +61,12 @@ namespace ExpertSystem.domain
         {
             return m_question;
         }
+
         public void SetQuestion(string newQuestion)
         {
             if (newQuestion != m_question)
             {
                 m_question = newQuestion;
-            }
-        }
-
-        public string? GetReasoning()
-        {
-            return m_reasoning;
-        }
-        public void SetReasoning(string newReasoning)
-        {
-            if (newReasoning != m_reasoning)
-            {
-                m_reasoning = newReasoning;
             }
         }
 
@@ -91,7 +77,7 @@ namespace ExpertSystem.domain
 
         public override string ToString()
         {
-            return m_name + " (" + m_domainValue!.GetName() + ")";
+            return m_name + " (" + m_domain.GetName() + ")";
         }
     }
 }

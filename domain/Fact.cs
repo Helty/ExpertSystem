@@ -1,4 +1,4 @@
-﻿using ExpertSystem.common;
+﻿using ExpertSystemCourseWork.common;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 using System.Xml.Linq;
 
-namespace ExpertSystem.domain
+namespace ExpertSystemCourseWork.domain
 {
     public class Fact
     {

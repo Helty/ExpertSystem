@@ -1,11 +1,11 @@
-﻿using ExpertSystem.common;
+﻿using ExpertSystemCourseWork.common;
 using System.Collections.Generic;
 
-namespace ExpertSystem.domain
+namespace ExpertSystemCourseWork.domain
 {
     public class ExpertSystem
     {
-        private OrderedDictionary<string, Domain> m_valueDomains;
+        private OrderedDictionary<string, Domain> m_domains;
         private OrderedDictionary<string, Variable> m_variables;
         private OrderedDictionary<string, Rule> m_rules;
 
@@ -16,7 +16,7 @@ namespace ExpertSystem.domain
 
         public ExpertSystem()
         {
-            m_valueDomains = new OrderedDictionary<string, Domain>();
+            m_domains = new OrderedDictionary<string, Domain>();
             m_variables = new OrderedDictionary<string, Variable>();
             m_rules = new OrderedDictionary<string, Rule>();
 
@@ -35,15 +35,15 @@ namespace ExpertSystem.domain
             return m_provedFacts;
         }
 
-        public OrderedDictionary<string, Domain> GetValueDomains()
+        public OrderedDictionary<string, Domain> GetDomains()
         {
-            return m_valueDomains;
+            return m_domains;
         }
         public void SetValueDomains(OrderedDictionary<string, Domain> newValueDomains)
         {
-            if (newValueDomains != m_valueDomains)
+            if (newValueDomains != m_domains)
             {
-                m_valueDomains = newValueDomains;
+                m_domains = newValueDomains;
             }
         }
 

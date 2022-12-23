@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-using ExpertSystem.common;
+using ExpertSystemCourseWork.common;
 
-namespace ExpertSystem.domain
+namespace ExpertSystemCourseWork.domain
 {
     public class Domain
     {
@@ -13,6 +13,12 @@ namespace ExpertSystem.domain
         {
             m_name = string.Empty;
             m_valueList = new List<string>();
+        }
+
+        public Domain(string name, List<string> values)
+        {
+            m_name = name;
+            m_valueList = values;
         }
 
         public List<string> GetValueList()

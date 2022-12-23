@@ -1,7 +1,7 @@
-﻿<Application x:Class="ExpertSystem.App"
+﻿<Application x:Class="ExpertSystemCourseWork.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:ExpertSystem"
+             xmlns:local="clr-namespace:ExpertSystemCourseWork"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          

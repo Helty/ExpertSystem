@@ -1,7 +1,7 @@
 ﻿using System;
-using ExpertSystem.common;
+using ExpertSystemCourseWork.common;
 
-namespace ExpertSystem.domain
+namespace ExpertSystemCourseWork.domain
 {
     public class Variable
     {
@@ -13,9 +13,17 @@ namespace ExpertSystem.domain
         public Variable()
         {
             m_name = string.Empty;
-            m_domain =  new Domain();
+            m_domain = new Domain();
             m_variableType = VariableType.Queried;
             m_question = string.Empty;
+        }
+
+        public Variable(string name, Domain domain, VariableType variableType = VariableType.Queried, string question = "")
+        {
+            m_name = name;
+            m_domain = domain;
+            m_variableType = variableType;
+            m_question = question;
         }
 
         public string GetName()

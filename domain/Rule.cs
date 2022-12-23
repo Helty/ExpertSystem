@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-using ExpertSystem.common;
+using ExpertSystemCourseWork.common;
 
-namespace ExpertSystem.domain
+namespace ExpertSystemCourseWork.domain
 {
     public class Rule
     {

@@ -1,0 +1,15 @@
+﻿<Window x:Name="AddNewDomainWindow" x:Class="ExpertSystemCourseWork.windows.AddNewDomain"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ExpertSystemCourseWork.windows"
+        mc:Ignorable="d"
+        Title="AddNewDomain" Height="159" Width="261" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Button x:Name="AddNewDomainButton" Content="Добавить" HorizontalAlignment="Center" Margin="0,83,0,0" VerticalAlignment="Top" Width="72" Click="AddNewDomainButton_Click"/>
+        <ComboBox x:Name="DomainValueComboBox" HorizontalAlignment="Left" Margin="20,44,0,0" VerticalAlignment="Top" Width="179"/>
+        <Button x:Name="AddNewValueDomainButton" Content="+" HorizontalAlignment="Left" Margin="204,44,0,0" VerticalAlignment="Top" Height="22" Width="26" RenderTransformOrigin="0.5,0.5" Click="AddNewValueDomainButton_Click"/>
+        <TextBox x:Name="InputNewDomainNameTextBox" HorizontalAlignment="Left" Margin="20,21,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="179"/>
+    </Grid>
+</Window>

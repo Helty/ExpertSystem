@@ -23,6 +23,7 @@ namespace ExpertSystemCourseWork.domain
 
         public List<string> GetValueList()
         {
+            m_valueList.Sort();
             return m_valueList;
         }
 

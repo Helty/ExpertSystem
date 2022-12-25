@@ -1,45 +1,61 @@
 ﻿using ExpertSystemCourseWork.common;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 
 namespace ExpertSystemCourseWork.domain
 {
     public class ExpertSystem
     {
-        private OrderedDictionary<string, Domain> m_domains;
-        private OrderedDictionary<string, Variable> m_variables;
-        private OrderedDictionary<string, Rule> m_rules;
+        private readonly List<VariableType> m_variableTypes = new() 
+        {
+            VariableType.Queried,
+            VariableType.Deducted,
+        };
+
+        private Dictionary<string, Domain> m_domains;
+        private Dictionary<string, Variable> m_variables;
+        private Dictionary<string, Rule> m_rules;
 
         private List<Fact> m_provedFacts;
         private List<Rule> m_workedRules;
 
-        private readonly Variable m_goal;
+        private readonly Variable m_target;
 
         public ExpertSystem()
         {
-            m_domains = new OrderedDictionary<string, Domain>();
-            m_variables = new OrderedDictionary<string, Variable>();
-            m_rules = new OrderedDictionary<string, Rule>();
+            m_domains = new();
+            m_variables = new();
+            m_rules = new();
 
             m_provedFacts = new List<Fact>();
             m_workedRules = new List<Rule>();
 
-            m_goal = new Variable();
+            m_target = new Variable();
         }
 
         public List<Rule> GetWorkedRules()
         {
             return m_workedRules;
         }
+
         public List<Fact> GetProvedFacts()
         {
             return m_provedFacts;
         }
 
-        public OrderedDictionary<string, Domain> GetDomains()
+        public List<VariableType> GetVariableTypes()
+        {
+            return m_variableTypes;
+        }
+
+        public Dictionary<string, Domain> GetDomains()
         {
             return m_domains;
         }
-        public void SetValueDomains(OrderedDictionary<string, Domain> newValueDomains)
+
+        public void SetValueDomains(Dictionary<string, Domain> newValueDomains)
         {
             if (newValueDomains != m_domains)
             {
@@ -47,11 +63,12 @@ namespace ExpertSystemCourseWork.domain
             }
         }
 
-        public OrderedDictionary<string, Variable> GetVariables()
+        public Dictionary<string, Variable> GetVariables()
         {
             return m_variables;
         }
-        public void SetVariables(OrderedDictionary<string, Variable> newVariables)
+
+        public void SetVariables(Dictionary<string, Variable> newVariables)
         {
             if (newVariables != m_variables)
             {
@@ -59,11 +76,12 @@ namespace ExpertSystemCourseWork.domain
             }
         }
 
-        public OrderedDictionary<string, Rule> GetRules()
+        public Dictionary<string, Rule> GetRules()
         {
             return m_rules;
         }
-        public void SetRules(OrderedDictionary<string, Rule> newRules)
+
+        public void SetRules(Dictionary<string, Rule> newRules)
         {
             if (newRules != m_rules)
             {
@@ -71,17 +89,29 @@ namespace ExpertSystemCourseWork.domain
             }
         }
 
-        public Fact StartConsult()
+        public List<string> GetDomainNames()
         {
-            m_provedFacts = new List<Fact>();
-            m_workedRules = new List<Rule>();
+            List<string> result = new();
 
-            foreach (Rule rule in m_rules.GetValues())
+            foreach (string domainName in m_domains.Keys) 
             {
-                rule.SetWorkedType(RuleWorkType.No);
+                result.Add(domainName);
             }
 
-            return Consult(m_goal);
+            return result;
+        }
+
+        public Fact StartConsult()
+        {
+            m_provedFacts = new();
+            m_workedRules = new();
+
+            foreach (Rule ruleValue in m_rules.Values)
+            {
+                ruleValue.SetWorkedType(RuleWorkType.No);
+            }
+
+            return Consult(m_target);
         }
 
         public RightlyType CheckRule(Rule rule)
@@ -150,14 +180,14 @@ namespace ExpertSystemCourseWork.domain
                 throw new DomainException("Домен \"" + goal.GetDomain().GetName() + "\" не имеет значений!");
             }
 
-            foreach (string ruleKey in m_rules.GetKeys())
+            foreach (Rule rule in m_rules.Values)
             {
-                Fact ruleResult = m_rules[ruleKey].GetResult();
+                Fact ruleResult = rule.GetResult();
 
                 if (ruleResult != null && ruleResult.GetVariable().CompareTo(goal) == 0)
                 {
-                    if (CheckRule(m_rules[ruleKey]) == RightlyType.Unknown) continue;
-                    return m_rules[ruleKey].GetResult();
+                    if (CheckRule(rule) == RightlyType.Unknown) continue;
+                    return rule.GetResult();
                 }
             }
 

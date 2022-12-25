@@ -1,8 +1,13 @@
 ﻿using ExpertSystemCourseWork.common;
 using ExpertSystemCourseWork.domain;
+using ExpertSystemCourseWork.windows;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,6 +25,17 @@ namespace ExpertSystemCourseWork
 {
     public partial class MainWindow : Window
     {
+        readonly Dictionary<VariableType, string> m_variableTypeMap = new()
+        {
+            { VariableType.Queried, "Запрашиваемая" },
+            { VariableType.Deducted, "Выводимая" },
+        };
+        readonly Dictionary<string, VariableType> m_invVariableTypeMap = new()
+        {
+            { "Запрашиваемая", VariableType.Queried},
+            { "Выводимая", VariableType.Deducted },
+        };
+
         private ExpertSystem m_expertSystem;
         
         public MainWindow()
@@ -28,59 +44,63 @@ namespace ExpertSystemCourseWork
 
             m_expertSystem = SetExpertSystem();
 
-            SetApplicationLayout();
+            UpdateApplicationLayout();
         }
 
         private ExpertSystem SetExpertSystem()
         {
-            return new ExpertSystem();
+            ExpertSystem expertSystem = new();
+
+            string variableName = "Угроза";
+            string domainName = "Угрозы";
+
+            Domain domain = new(domainName, new List<string>()
+                {
+                    "УБИ.001: Угроза автоматического распространения вредоносного кода в грид-системе",
+                    "УБИ.002: Угроза агрегирования данных, передаваемых в грид-системе",
+                    "УБИ.003: Угроза использования слабостей криптографических алгоритмов и уязвимостей в программном обеспечении их реализации",
+                    "УБИ.004: Угроза аппаратного сброса пароля BIOS",
+                    "УБИ.005: Угроза внедрения вредоносного кода в BIOS",
+                    "УБИ.006: Угроза внедрения кода или данных",
+                    "УБИ.007: Угроза воздействия на программы с высокими привилегиями",
+                    "УБИ.008: Угроза восстановления и/или повторного использования аутентификационной информации",
+                    "УБИ.009: Угроза восстановления предыдущей уязвимой версии BIOS",
+                    "УБИ.010: Угроза выхода процесса за пределы виртуальной машины",
+                }
+            );
+
+            Variable Variable = new(
+                variableName,
+                domain,
+                VariableType.Deducted
+            );
+
+            expertSystem.GetDomains().Add(domainName, domain);
+            expertSystem.GetVariables().Add(variableName, Variable);
+
+            return expertSystem;
         }
 
-        private void SetApplicationLayout()
+        private void UpdateApplicationLayout()
         {
-            SetVariablesLayout();
-            //ClearRulesLayout();
-            //ClearWorkedRules();
-            //ClearUserInteraction();
-
-            //UpdateVriables();
-            //UpdateRules();
-        }
-
-        private void SetVariablesLayout()
-        {
-            VariablesListBox.Tag = null;
-
-            string newVariableName = "Угроза";
-            string[] list = { "Дa", "Нет" };
-            Domain domain = new Domain("Да-Нет", list.ToList());
-            Variable newVariable = new Variable(newVariableName, domain, VariableType.Queried);
-            m_expertSystem.GetVariables().Add(newVariableName, newVariable);
-
-            foreach (string variableName in m_expertSystem.GetVariables().GetKeys())
-            {
-                VariablesListBox.Items.Add(variableName);
-            }
+            UpdateVariablesLayout();
         }
 
         #region ФАКТЫ
         private void VariablesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            /*
-            if (VariablesListBox.Tag != null)
-            {
-                SaveVariable(sender, e);
-            }
-            */
+            string variableName = ((string)((ListBox)sender).SelectedItem) ?? string.Empty;
 
-            string variableName = VariablesListBox.SelectedItem.ToString() ?? string.Empty;
+            if (variableName == string.Empty) { return; }
+
+            Variable variable = (Variable)m_expertSystem.GetVariables()[variableName]!;
 
             #region имя переменной
             VariableNameTextBox.Text = variableName;
             #endregion
 
             #region домен
-            Domain variableDomain = m_expertSystem.GetVariables()[variableName].GetDomain();
+            Domain variableDomain = variable.GetDomain();
             
             if (variableDomain == null)
             {
@@ -88,12 +108,11 @@ namespace ExpertSystemCourseWork
             }
             else
             {
-                if (DomainComboBox.Items.Count == 0)
+                DomainComboBox.Items.Clear();
+
+                foreach (string domainName in m_expertSystem.GetDomainNames())
                 {
-                    foreach (string domain in variableDomain.GetValueList())
-                    {
-                        DomainComboBox.Items.Add(domain.ToString());
-                    }
+                    DomainComboBox.Items.Add(domainName);
                 }
 
                 for (int domain = 0; domain < DomainComboBox.Items.Count; domain++)
@@ -120,7 +139,7 @@ namespace ExpertSystemCourseWork
 
                 foreach (string value in values)
                 {
-                    ValueComboBox.Items.Add(value.ToString());
+                    ValueComboBox.Items.Add(value);
                 }
 
                 ValueComboBox.SelectedIndex = 0;
@@ -128,138 +147,189 @@ namespace ExpertSystemCourseWork
             #endregion
 
             #region тип переменной
-            switch (m_expertSystem.GetVariables()[variableName].GetVariableType())
+
+            TypeComboBox.Items.Clear();
+            foreach (VariableType varType in m_expertSystem.GetVariableTypes())
             {
-                case VariableType.Deducted:
-                    {
-                        TypeComboBox.SelectedItem = VariableType.Deducted.ToString();
-                        InputVariableQuestionTextBox.IsEnabled = false;
-                        break;
-                    }
-                case VariableType.Queried:
-                    {
-                        TypeComboBox.SelectedItem = VariableType.Queried.ToString();
-                        InputVariableQuestionTextBox.IsEnabled = true;
-                        break;
-                    }
+                TypeComboBox.Items.Add(m_variableTypeMap[varType]);
             }
+
+            VariableType variableType = variable.GetVariableType();
+            TypeComboBox.SelectedItem = m_variableTypeMap[variableType];
+            InputVariableQuestionTextBox.IsEnabled = (variableType == VariableType.Queried);
             #endregion
 
             #region вопрос
-            if (m_expertSystem.GetVariables()[variableName].GetVariableType() == VariableType.Queried)
+            if (variableType == VariableType.Queried)
             {
-                InputVariableQuestionTextBox.Text = m_expertSystem.GetVariables()[variableName].GetQuestion();
+                InputVariableQuestionTextBox.Text = ((Variable)m_expertSystem.GetVariables()[variableName]!).GetQuestion();
             }
             #endregion
-
-            VariablesListBox.Tag = VariablesListBox.SelectedIndex;
         }
-
         private void DomainComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string? newDomainName = DomainComboBox.SelectedItem.ToString();
-            OrderedDictionary<string, Domain> domainMap = m_expertSystem.GetDomains();
+            string newDomainName = ((string)((ComboBox)sender).SelectedItem) ?? string.Empty;
+            if (newDomainName == string.Empty) { return; }
 
-            if (newDomainName != null && domainMap.ContainsKey(newDomainName))
+            Dictionary<string, Domain> domains = m_expertSystem.GetDomains();
+
+            if (newDomainName != null && domains.Keys.Contains(newDomainName))
             {
-                Domain newDomain = domainMap[newDomainName];
+                Domain newDomain = domains[newDomainName];
                 ValueComboBox.Items.Clear();
 
                 for (int i = 0; i < newDomain.GetValueCount(); i++)
                 {
                     ValueComboBox.Items.Add(newDomain.GetValue(i));
                 }
+                ValueComboBox.SelectedIndex = 0;
             }
         }
-
         private void TypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            VariableType variableType;
-            Enum.TryParse(TypeComboBox.SelectedItem.ToString(), out variableType);
-            
-            if (variableType == VariableType.Queried)
-            {
-                InputVariableQuestionTextBox.IsEnabled = true;
-            }
-            else
-            {
-                InputVariableQuestionTextBox.Clear();
-                InputVariableQuestionTextBox.IsEnabled = false;
-            }
+            string variableType = ((string)((ComboBox)sender).SelectedItem) ?? string.Empty;
+            if (variableType == string.Empty) { return; }
+
+            InputVariableQuestionTextBox.IsEnabled = (m_invVariableTypeMap[variableType] == VariableType.Queried);
+            InputVariableQuestionTextBox.Clear();
         }
 
         private void AddNewDomainButton_Click(object sender, RoutedEventArgs e)
         {
-
+            AddNewDomain addNewDomain = new(m_expertSystem);
+            if (addNewDomain.ShowDialog() == false)
+            {
+                m_expertSystem = addNewDomain.ReturnExpertSystem;
+            }
+            UpdateDomainLayout();
         }
-
         private void AddNewValueButton_Click(object sender, RoutedEventArgs e)
         {
+            string domainNameToChange = DomainComboBox.SelectedItem.ToString()!;
 
+            if (domainNameToChange != string.Empty)
+            {
+                AddNewValueDomain addNewValueDomain = new(m_expertSystem, domainNameToChange);
+                if (addNewValueDomain.ShowDialog() == false)
+                {
+                    m_expertSystem = addNewValueDomain.ReturnExpertSystem;
+                }
+
+                UpdateDomainValuesLayout(domainNameToChange);
+            }
+            else
+            {
+                MessageBox.Show("Имя домена к которому будет добавляться значение не задан.");
+            }
         }
 
         private void AddNewVariableButton_Click(object sender, RoutedEventArgs e)
         {
-            Variable newVariable = new Variable();
+            string newVariableName = VariableNameTextBox.Text;
 
-            if (!VariablesListBox.Items.Contains(VariableNameTextBox.Text))
+            if (!m_expertSystem.GetVariables().Keys.Contains(newVariableName))
             {
-                newVariable.SetName(VariableNameTextBox.Text);
+                Variable? newVariable = CreateVariableWithCurrentValue(newVariableName);
+                if (newVariable == null) return;
 
-                string? domainName = DomainComboBox.SelectedValue.ToString();
-                if (domainName == null) MessageBox.Show("У переменной не установлен домен.");
-                newVariable.SetDomain(m_expertSystem.GetDomains()[domainName!]);
+                m_expertSystem.GetVariables().Add(newVariableName, newVariable);
+                UpdateVariablesLayout();
 
-                VariableType variableType;
-                Enum.TryParse(TypeComboBox.SelectedValue.ToString(), out variableType);
-                newVariable.SetVariableType(variableType);
-
-                string? question = InputVariableQuestionTextBox.Text;
-                if (question != null) newVariable.SetQuestion(question);
-
-                m_expertSystem.GetVariables().Add(VariableNameTextBox.Text, newVariable);
+                MessageBox.Show($"Переменная с именем '{newVariableName}' успешно добавлена.");
             }
             else
             {
-                MessageBox.Show("Переменная с таким именем уже существует.");
+                MessageBox.Show($"Переменная с именем '{newVariableName}' уже существует.");
             }
         }
-
         private void SaveVariableButton_Click(object sender, RoutedEventArgs e)
         {
-            string? variableNameToSave = VariableNameTextBox.Text;
-            if (variableNameToSave != null && VariablesListBox.Items.Contains(variableNameToSave))
+            string? oldVariableName = VariablesListBox.SelectedItem.ToString();
+            string? newVariableName = VariableNameTextBox.Text;
+
+            if (newVariableName != null && m_expertSystem.GetVariables().Keys.Contains(oldVariableName!))
             {
-                m_expertSystem.GetVariables()[VariablesListBox.SelectedItem.ToString()!].SetName(variableNameToSave);
+                Variable? newVariable = CreateVariableWithCurrentValue(newVariableName);
+                if (newVariable == null) return;
 
-                string? domainName = DomainComboBox.SelectedValue.ToString();
-                if (domainName == null) MessageBox.Show("У переменной не установлен домен.");
-                m_expertSystem.GetVariables()[variableNameToSave].SetDomain(m_expertSystem.GetDomains()[domainName!]);
+                if (newVariableName == oldVariableName)
+                {
+                    m_expertSystem.GetVariables()[newVariableName] = newVariable;
+                }
+                else
+                {
+                    m_expertSystem.GetVariables().Remove(oldVariableName!);
+                    m_expertSystem.GetVariables().Add(newVariableName, newVariable);
+                }
 
-                VariableType variableType;
-                Enum.TryParse(TypeComboBox.SelectedValue.ToString(), out variableType);
-                m_expertSystem.GetVariables()[variableNameToSave].SetVariableType(variableType);
-
-                string? question = InputVariableQuestionTextBox.Text;
-                if (question != null) m_expertSystem.GetVariables()[variableNameToSave].SetQuestion(question);
+                UpdateVariablesLayout();
+                MessageBox.Show($"Переменная успешно изменена.");
             }
             else
             {
-                MessageBox.Show("Переменной с таким именем не существует для изменения.");
+                MessageBox.Show($"Переменную с именем '{oldVariableName}' не удалось изменить.");
+            }
+        }
+        private void DeleteVariableButton_Click(object sender, RoutedEventArgs e)
+        {
+            string? variableNameToDelete = VariablesListBox.SelectedItem.ToString();
+            if (variableNameToDelete != null && m_expertSystem.GetVariables().Keys.Contains(variableNameToDelete))
+            {
+                m_expertSystem.GetVariables().Remove(variableNameToDelete);
+                UpdateVariablesLayout();
+                MessageBox.Show($"Переменная с именен: '{variableNameToDelete}' успешно удалена.");
+            }
+            else
+            {
+                MessageBox.Show($"Переменная с именен: '{variableNameToDelete}' не найдена для удаления.");
             }
         }
 
-        private void DeleteVariableButton_Click(object sender, RoutedEventArgs e)
+        private Variable? CreateVariableWithCurrentValue(string newVariableName)
         {
-            string? variableNameToDelete = VariableNameTextBox.Text;
-            if (variableNameToDelete != null && VariablesListBox.Items.Contains(variableNameToDelete))
+            string? domainName = DomainComboBox.SelectedValue.ToString();
+            if (domainName == null)
             {
-                m_expertSystem.GetVariables().Remove(variableNameToDelete);
+                MessageBox.Show($"У переменной '{newVariableName}' не установлен домен co значениями.");
+                return null;
             }
-            else
+
+            Variable newVariable = new(
+                newVariableName,
+                (Domain)m_expertSystem.GetDomains()[domainName]!,
+                m_invVariableTypeMap[TypeComboBox.SelectedValue.ToString()!],
+                InputVariableQuestionTextBox.Text
+            );
+
+            return newVariable;
+        }
+
+        private void UpdateVariablesLayout()
+        {
+            VariablesListBox.Items.Clear();
+            foreach (string variableName in m_expertSystem.GetVariables().Keys)
             {
-                MessageBox.Show("Нет переменной для удаления.");
+                VariablesListBox.Items.Add(variableName);
             }
+            VariablesListBox.SelectedIndex = 0;
+        }
+        private void UpdateDomainValuesLayout(string domainName)
+        {
+            ValueComboBox.Items.Clear();
+            foreach (string valueName in m_expertSystem.GetDomains()[domainName].GetValueList())
+            {
+                ValueComboBox.Items.Add(valueName);
+            }
+            ValueComboBox.SelectedIndex = 0;
+        }
+        private void UpdateDomainLayout()
+        {
+            DomainComboBox.Items.Clear();
+            foreach (string domainName in m_expertSystem.GetDomains().Keys)
+            {
+                DomainComboBox.Items.Add(domainName);
+            }
+            DomainComboBox.SelectedIndex = 0;
         }
         #endregion
 

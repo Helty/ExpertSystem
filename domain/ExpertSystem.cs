@@ -21,7 +21,7 @@ namespace ExpertSystemCourseWork.domain
         private List<Fact> m_provedFacts;
         private List<Rule> m_workedRules;
 
-        private readonly Variable m_target;
+        private Variable m_target;
 
         public ExpertSystem()
         {
@@ -57,6 +57,18 @@ namespace ExpertSystemCourseWork.domain
             }
 
             return result;
+        }
+
+        public Variable GetTarget()
+        {
+            return m_target;
+        }
+        public void SetTarget(Variable newVariable)
+        {
+            if (newVariable != m_target)
+            {
+                m_target = newVariable;
+            }
         }
 
         public Dictionary<string, Domain> GetDomains()
@@ -95,97 +107,13 @@ namespace ExpertSystemCourseWork.domain
             }
         }
 
-        public Fact StartConsult()
+        public void ClearProvedFacts()
         {
-            m_provedFacts = new();
-            m_workedRules = new();
-
-            foreach (Rule ruleValue in m_rules.Values)
-            {
-                ruleValue.SetWorkedType(RuleWorkType.No);
-            }
-
-            return Consult(m_target);
+            m_provedFacts.Clear();
         }
-
-        public RightlyType CheckRule(Rule rule)
+        public void ClearWorkedRules()
         {
-            bool isFactTrue = true;
-
-            foreach (Fact reasonFact in rule.GetCauses())
-            {
-                if (!Fact.ContainsIn(reasonFact, m_provedFacts))
-                {
-                    Fact fact = Consult(reasonFact.GetVariable());
-                    m_provedFacts.Add(fact);
-
-                    isFactTrue = (fact.GetRightlyType() == RightlyType.Yes) && (reasonFact.CompareTo(fact) == 0);
-
-                    foreach (string value in fact.GetVariable().GetDomain().GetValueList())
-                    {
-                        if (value != fact.GetValue())
-                        {
-                            m_provedFacts.Add(new Fact(fact.GetVariable(), value, RightlyType.No));
-                        }
-                    }
-                }
-                else
-                {
-                    Fact? fact = Fact.GetFromList(reasonFact, m_provedFacts);
-                    isFactTrue = (fact != null && fact.GetRightlyType() == RightlyType.Yes);
-                }
-
-                if (!isFactTrue) break;
-            }
-
-            if (isFactTrue)
-            {
-                Fact? fact = rule.GetResult();
-
-                if (fact == null || !fact.GetVariable().GetDomain().GetValueList().Contains(fact.GetValue()))
-                {
-                    throw new DomainException("Правило " + rule.GetRuleName() + " пытается присвоить значение не из домена!");
-                }
-
-                rule.SetWorkedType(RuleWorkType.Signifi);
-                m_workedRules.Add(rule);
-
-                fact.SetRightlyType(RightlyType.Yes);
-                m_provedFacts.Add(fact);
-
-                return RightlyType.Yes;
-            }
-
-            rule.SetWorkedType(RuleWorkType.Unsignify);
-            m_workedRules.Add(rule);
-
-            return RightlyType.Unknown;
-        }
-
-        private Fact Consult(Variable goal)
-        {
-            if (goal.GetDomain() == null)
-            {
-                throw new DomainException("У переменной \"" + goal.GetName() + "\" неизвестен домен!");
-            }
-
-            if (goal.GetDomain().GetValueList().Count == 0)
-            {
-                throw new DomainException("Домен \"" + goal.GetDomain().GetName() + "\" не имеет значений!");
-            }
-
-            foreach (Rule rule in m_rules.Values)
-            {
-                Fact? ruleResult = rule.GetResult();
-
-                if (ruleResult != null && ruleResult.GetVariable().CompareTo(goal) == 0)
-                {
-                    if (CheckRule(rule) == RightlyType.Unknown) continue;
-                    return rule.GetResult()!;
-                }
-            }
-
-            return new Fact(goal, goal.GetDomain().GetValue(0), RightlyType.Unknown);
+            m_workedRules.Clear();
         }
     }
 }

@@ -607,12 +607,137 @@ namespace ExpertSystemCourseWork
         }
         #endregion
 
-        private void AnswerButton_Click(object sender, RoutedEventArgs e)
+        private void StartConsultationButton_Click(object sender, RoutedEventArgs e)
         {
-
+            try
+            {
+                if (m_expertSystem.GetTarget() != null)
+                {
+                    Fact result = StartConsult();
+                    
+                    MessageBox.Show((result.GetRightlyType() == RightlyType.Unknown)
+                        ? "Не удалось установить истину!"
+                        : result.ToString()
+                    );
+                }
+            }
+            catch (DomainException de)
+            {
+                MessageBox.Show("Не удалось сделать вывод! Причина: " + de.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Неизвестная ошибка!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
-        private void StartConsultationButton_Click(object sender, RoutedEventArgs e)
+        private Fact StartConsult()
+        {
+            m_expertSystem.SetTarget(m_expertSystem.GetVariables().Values.ToList().Find(var => var.GetName() == "Угроза")!);
+
+            m_expertSystem.ClearProvedFacts();
+            m_expertSystem.ClearWorkedRules();
+
+            foreach (Rule ruleValue in m_expertSystem.GetRules().Values)
+            {
+                ruleValue.SetWorkedType(RuleWorkType.No);
+            }
+
+            return Consult(m_expertSystem.GetTarget());
+        }
+
+        private Fact Consult(Variable target)
+        {
+            if (target.GetDomain() == null)
+            {
+                throw new DomainException($"У переменной {target.GetName()} неизвестен домен!");
+            }
+
+            if (target.GetDomain().GetValueList().Count == 0)
+            {
+                throw new DomainException($"Домен {target.GetDomain().GetName()} не имеет значений!");
+            }
+
+            if (target.GetVariableType() == VariableType.Queried)
+            {
+                PollingWindow interviewWindow = new(target);
+                if (interviewWindow.ShowDialog() == false)
+                {
+                    return new Fact(target, interviewWindow.ReturnUserAnswer, RightlyType.Yes);
+                }
+            }
+            else
+            {
+                foreach (Rule rule in m_expertSystem.GetRules().Values)
+                {
+                    Fact? ruleResult = rule.GetResult();
+
+                    if (ruleResult != null && ruleResult.GetVariable().CompareTo(target) == 0)
+                    {
+                        if (CheckRule(rule) == RightlyType.Unknown) continue;
+                        else return rule.GetResult()!;
+                    }
+                }
+            }
+
+            return new Fact(target, target.GetDomain().GetValue(0), RightlyType.Unknown);
+        }
+
+        private RightlyType CheckRule(Rule rule)
+        {
+            bool isFactTrue = true;
+
+            foreach (Fact causeFact in rule.GetCauses())
+            {
+                if (!m_expertSystem.GetProvedFacts().Contains(causeFact)) //Fact.ContainsIn(reasonFact, m_provedFacts)
+                {
+                    Fact fact = Consult(causeFact.GetVariable());
+                    m_expertSystem.GetProvedFacts().Add(fact);
+
+                    isFactTrue = (fact.GetRightlyType() == RightlyType.Yes) && (causeFact.CompareTo(fact) == 0);
+
+                    foreach (string value in fact.GetVariable().GetDomain().GetValueList())
+                    {
+                        if (value != fact.GetValue())
+                        {
+                            m_expertSystem.GetProvedFacts().Add(new Fact(fact.GetVariable(), value, RightlyType.No));
+                        }
+                    }
+                }
+                else
+                {
+                    Fact fact = m_expertSystem.GetProvedFacts().Find(fact => fact == causeFact)!; // Fact.GetFromList(reasonFact, m_provedFacts)
+                    isFactTrue = (fact.GetRightlyType() == RightlyType.Yes);
+                }
+
+                if (!isFactTrue) break;
+            }
+
+            if (isFactTrue)
+            {
+                Fact? fact = rule.GetResult();
+
+                if (fact == null || !fact.GetVariable().GetDomain().GetValueList().Contains(fact.GetValue()))
+                {
+                    throw new DomainException($"Правило {rule.GetRuleName()} пытается присвоить значение не из домена!");
+                }
+
+                rule.SetWorkedType(RuleWorkType.Signifi);
+                m_expertSystem.GetWorkedRules().Add(rule);
+
+                fact.SetRightlyType(RightlyType.Yes);
+                m_expertSystem.GetProvedFacts().Add(fact);
+
+                return RightlyType.Yes;
+            }
+
+            rule.SetWorkedType(RuleWorkType.Unsignify);
+            m_expertSystem.GetWorkedRules().Add(rule);
+
+            return RightlyType.Unknown;
+        }
+
+        private void AnswerButton_Click(object sender, RoutedEventArgs e)
         {
 
         }

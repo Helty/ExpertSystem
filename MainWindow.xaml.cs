@@ -2,9 +2,13 @@
 using ExpertSystemCourseWork.domain;
 using ExpertSystemCourseWork.windows;
 using ExpertSystemCourseWork.windows.rules;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -323,11 +327,16 @@ namespace ExpertSystemCourseWork
         private void UpdateVariablesLayout()
         {
             VariablesListBox.Items.Clear();
+            TargetVariableComboBox.Items.Clear();
+
             foreach (string variableName in m_expertSystem.GetVariables().Keys)
             {
                 VariablesListBox.Items.Add(variableName);
+                TargetVariableComboBox.Items.Add(variableName);
             }
+
             VariablesListBox.SelectedIndex = 0;
+            TargetVariableComboBox.SelectedIndex = -1;
         }
         private void UpdateDomainValuesLayout(string domainName)
         {
@@ -605,18 +614,55 @@ namespace ExpertSystemCourseWork
                 ConsequenceListBox.SelectedIndex = (resultfact == null || resultfact.ToString() == " = ") ? -1 : 0;
             }
         }
+        private void UpdateWorkedRulesLayout()
+        {
+            var ifItem = new TreeViewItem { Header = "ЕСЛИ" };
+            var elseItem = new TreeViewItem { Header = "ТО" };
+            var becauseItem = new TreeViewItem { Header = "ТАК КАК" };
+
+            foreach (Rule rule in m_expertSystem.GetWorkedRules())
+            {
+                if (rule.GetWorkedType() == RuleWorkType.Signifi)
+                {
+                    var headItem = new TreeViewItem { Header = rule.GetRuleName() };
+
+                    RulesTreeView.Items.Add(headItem);
+
+                    headItem.Items.Add(ifItem);
+                    foreach (Fact fact in rule.GetCauses())
+                    {
+                        ifItem.Items.Add(fact.ToString());
+                    }
+
+                    headItem.Items.Add(elseItem);
+                    elseItem.Items.Add(rule.GetResult()!.ToString());
+
+                    headItem.Items.Add(becauseItem);
+                    becauseItem.Items.Add(rule.GetArgumentation());
+                }
+            }
+        }
         #endregion
 
         private void StartConsultationButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
+                if (TargetVariableComboBox.SelectedIndex < 0)
+                {
+                    MessageBox.Show("Цель экспертизы не установлена");
+                    return;
+                }
+
+                RulesTreeView.Items.Clear();
+                m_expertSystem.SetTarget(m_expertSystem.GetVariables().Values.ToList().Find(var => var.GetName() == TargetVariableComboBox.SelectedValue.ToString())!);
+
                 if (m_expertSystem.GetTarget() != null)
                 {
                     Fact result = StartConsult();
-                    
+
                     MessageBox.Show((result.GetRightlyType() == RightlyType.Unknown)
-                        ? "Не удалось установить истину!"
+                        ? "Экспертиза не в состоянии помочь("
                         : result.ToString()
                     );
                 }
@@ -630,11 +676,8 @@ namespace ExpertSystemCourseWork
                 MessageBox.Show("Неизвестная ошибка!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         private Fact StartConsult()
         {
-            m_expertSystem.SetTarget(m_expertSystem.GetVariables().Values.ToList().Find(var => var.GetName() == "Угроза")!);
-
             m_expertSystem.ClearProvedFacts();
             m_expertSystem.ClearWorkedRules();
 
@@ -645,7 +688,6 @@ namespace ExpertSystemCourseWork
 
             return Consult(m_expertSystem.GetTarget());
         }
-
         private Fact Consult(Variable target)
         {
             if (target.GetDomain() == null)
@@ -682,7 +724,6 @@ namespace ExpertSystemCourseWork
 
             return new Fact(target, target.GetDomain().GetValue(0), RightlyType.Unknown);
         }
-
         private RightlyType CheckRule(Rule rule)
         {
             bool isFactTrue = true;
@@ -724,6 +765,7 @@ namespace ExpertSystemCourseWork
 
                 rule.SetWorkedType(RuleWorkType.Signifi);
                 m_expertSystem.GetWorkedRules().Add(rule);
+                UpdateWorkedRulesLayout();
 
                 fact.SetRightlyType(RightlyType.Yes);
                 m_expertSystem.GetProvedFacts().Add(fact);
@@ -733,13 +775,58 @@ namespace ExpertSystemCourseWork
 
             rule.SetWorkedType(RuleWorkType.Unsignify);
             m_expertSystem.GetWorkedRules().Add(rule);
+            UpdateWorkedRulesLayout();
 
             return RightlyType.Unknown;
         }
 
-        private void AnswerButton_Click(object sender, RoutedEventArgs e)
+        private void LoadButton_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                OpenFileDialog openFileDialog = new()
+                {
+                    Filter = "Expert System (*.ExpertSystem)|*.ExpertSystem"
+                };
 
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    string jsonString = File.ReadAllText(openFileDialog.FileName);
+                    m_expertSystem = JsonSerializer.Deserialize<ExpertSystem>(jsonString)!;
+                    MessageBox.Show("Экспертная система успешно загружена!", "Загрузка", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    UpdateRulesLayout(null);
+                    UpdateWorkedRulesLayout();
+
+                    UpdateVariablesLayout();
+                    UpdateDomainLayout();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                SaveFileDialog saveFileDialog = new()
+                {
+                    Filter = "Expert System (*.ExpertSystem)|*.ExpertSystem"
+                };
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    string jsonString = JsonSerializer.Serialize(m_expertSystem);
+                    File.WriteAllText(saveFileDialog.FileName, jsonString);
+                    MessageBox.Show("Экспертная система успешно сохранена!", "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

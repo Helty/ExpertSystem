@@ -1,25 +1,12 @@
 ﻿using ExpertSystemCourseWork.common;
 using ExpertSystemCourseWork.domain;
 using ExpertSystemCourseWork.windows;
+using ExpertSystemCourseWork.windows.rules;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Xml.Linq;
 
 namespace ExpertSystemCourseWork
 {
@@ -51,10 +38,12 @@ namespace ExpertSystemCourseWork
         {
             ExpertSystem expertSystem = new();
 
-            string variableName = "Угроза";
-            string domainName = "Угрозы";
+            string variableNameThreat = "Угроза";
 
-            Domain domain = new(domainName, new List<string>()
+            string domainNameThreat = "Угрозы";
+            string domainNameYesNo = "Да-Нет";
+
+            Domain domainThreat = new(domainNameThreat, new List<string>()
                 {
                     "УБИ.001: Угроза автоматического распространения вредоносного кода в грид-системе",
                     "УБИ.002: Угроза агрегирования данных, передаваемых в грид-системе",
@@ -69,14 +58,24 @@ namespace ExpertSystemCourseWork
                 }
             );
 
-            Variable Variable = new(
-                variableName,
-                domain,
+            Domain domainYesNo = new(domainNameYesNo, new List<string>()
+                {
+                    "Да",
+                    "Нет",
+                }
+            );
+
+
+            Variable variableThreat = new(
+                variableNameThreat,
+                domainThreat,
                 VariableType.Deducted
             );
 
-            expertSystem.GetDomains().Add(domainName, domain);
-            expertSystem.GetVariables().Add(variableName, Variable);
+            expertSystem.GetDomains().Add(domainNameThreat, domainThreat);
+            expertSystem.GetDomains().Add(domainNameYesNo, domainYesNo);
+
+            expertSystem.GetVariables().Add(variableNameThreat, variableThreat);
 
             return expertSystem;
         }
@@ -84,6 +83,17 @@ namespace ExpertSystemCourseWork
         private void UpdateApplicationLayout()
         {
             UpdateVariablesLayout();
+            UpdateRulesLayout(null);
+
+            ChangeRuleButton.IsEnabled = false;
+            DeleteRuleButton.IsEnabled = false;
+            CausesListBox.IsEnabled = false;
+            ConsequenceListBox.IsEnabled = false;
+            AddCousesFactButton.IsEnabled = false;
+            ChangeCousesFactButton.IsEnabled = false;
+            DeleteCousesFactButton.IsEnabled = false;
+            InstallConsequenceRuleButton.IsEnabled = false;
+            DeleteConsequenceRuleButton.IsEnabled = false;
         }
 
         #region ФАКТЫ
@@ -244,7 +254,13 @@ namespace ExpertSystemCourseWork
         }
         private void SaveVariableButton_Click(object sender, RoutedEventArgs e)
         {
-            string? oldVariableName = VariablesListBox.SelectedItem.ToString();
+            if (VariablesListBox.SelectedItem == null)
+            {
+                MessageBox.Show("Нет выбранной переменной.");
+                return;
+            }
+
+            string oldVariableName = VariablesListBox.SelectedItem.ToString()!;
             string? newVariableName = VariableNameTextBox.Text;
 
             if (newVariableName != null && m_expertSystem.GetVariables().Keys.Contains(oldVariableName!))
@@ -263,7 +279,7 @@ namespace ExpertSystemCourseWork
                 }
 
                 UpdateVariablesLayout();
-                MessageBox.Show($"Переменная успешно изменена.");
+                MessageBox.Show("Переменная успешно изменена.");
             }
             else
             {
@@ -334,50 +350,261 @@ namespace ExpertSystemCourseWork
         #endregion
 
         #region ПРАВИЛА
+        private void RulesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            bool isRuleSelected = RulesListBox.SelectedIndex >= 0;
+
+            InputDescriptionRuleTextBox.Clear();
+            CausesListBox.Items.Clear();
+            ConsequenceListBox.Items.Clear();
+
+            CausesListBox.IsEnabled = isRuleSelected;
+            ConsequenceListBox.IsEnabled = isRuleSelected;
+
+            AddCousesFactButton.IsEnabled = isRuleSelected;
+            ChangeCousesFactButton.IsEnabled = isRuleSelected;
+            DeleteCousesFactButton.IsEnabled = isRuleSelected;
+
+            InstallConsequenceRuleButton.IsEnabled = isRuleSelected;
+            DeleteConsequenceRuleButton.IsEnabled = isRuleSelected;
+
+            DeleteRuleButton.IsEnabled = isRuleSelected;
+            ChangeRuleButton.IsEnabled = isRuleSelected;
+
+            if (isRuleSelected)
+            {
+                string selectedRuleName = ((ListBox)sender).SelectedItem.ToString()!.Split(':')[0];
+                Rule rule = m_expertSystem.GetRules()[selectedRuleName];
+                RulesListBox.SelectedItem = rule.ToString();
+
+                for (int causeIndex = 0; causeIndex < rule.CausesCount(); causeIndex++)
+                {
+                    CausesListBox.Items.Add(rule.GetCause(causeIndex));
+                }
+
+                if (rule.GetResult() != null)
+                {
+                    ConsequenceListBox.Items.Add(rule.GetResult());
+                }
+
+                InputDescriptionRuleTextBox.Text = rule.GetArgumentation();
+            }
+        }
+
         private void AddRuleButton_Click(object sender, RoutedEventArgs e)
         {
-
+            AddNewRule addNewRuleWindow = new AddNewRule();
+            if (addNewRuleWindow.ShowDialog() == false)
+            {
+                Rule? newRule = addNewRuleWindow.ReturnNewRule;
+                if (newRule != null && !m_expertSystem.GetRules().Values.Any(rule => rule.GetRuleName() == newRule.GetRuleName()))
+                {
+                    m_expertSystem.GetRules().Add(newRule.GetRuleName(), newRule);
+                    UpdateRulesLayout(newRule.GetRuleName());
+                }
+            }
         }
-
         private void ChangeRuleButton_Click(object sender, RoutedEventArgs e)
         {
+            if (RulesListBox.SelectedIndex < 0)
+            {
+                MessageBox.Show("Сначала необходимо выбрать правило");
+                return;
+            }
 
+            string ruleNameToChange = RulesListBox.SelectedItem.ToString()!.Split(':')[0];
+            Rule ruleToChange = m_expertSystem.GetRules()[ruleNameToChange];
+
+            AddNewRule addNewRuleWindow = new AddNewRule(ruleToChange);
+            if (addNewRuleWindow.ShowDialog() == false)
+            {
+                Rule? changedRule = addNewRuleWindow.ReturnNewRule;
+                if (changedRule != null)
+                {
+                    m_expertSystem.GetRules().Remove(ruleToChange.GetRuleName());
+                    m_expertSystem.GetRules().Add(changedRule!.GetRuleName(), changedRule);
+                    MessageBox.Show($"Правило '{changedRule.GetRuleName()}' успешно изменено.");
+                    UpdateRulesLayout(changedRule.GetRuleName());
+                }
+            }
         }
-
         private void DeleteRuleButton_Click(object sender, RoutedEventArgs e)
         {
+            if (RulesListBox.SelectedIndex < 0)
+            {
+                MessageBox.Show("Сначала необходимо выбрать правило");
+                return;
+            }
 
+            if (MessageBox.Show("Действительно удалить текущее правило?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                string selectedRuleName = RulesListBox.SelectedItem.ToString()!;
+                m_expertSystem.GetRules().Remove(selectedRuleName.Split(':')[0]);
+                RulesListBox.Items.Remove(RulesListBox.SelectedItem.ToString());
+                UpdateRulesLayout(null);
+            }
         }
 
         #region ЕСЛИ
         private void AddCousesFactButton_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                AddNewFact addNewFact = new AddNewFact(m_expertSystem, true);
+                if (addNewFact.ShowDialog() == false)
+                {
+                    Fact? newFact = addNewFact.ReturnNewFact;
+                    string selectedRuleName = RulesListBox.SelectedItem.ToString()!.Split(':')[0];
 
+                    if (newFact != null && !m_expertSystem.GetRules()[selectedRuleName].GetCauses().Contains(newFact))
+                    {
+                        m_expertSystem.GetRules()[selectedRuleName].InsertCause(newFact, m_expertSystem.GetRules()[selectedRuleName].GetCauses().Count);
+                        UpdateRulesLayout(selectedRuleName);
+                    }
+                }
+            }
+            catch (RuleException ruleException)
+            {
+                MessageBox.Show(ruleException.Message);
+                RulesListBox.SelectedIndex = -1;
+            }
         }
-
         private void ChangeCousesFactButton_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                if (CausesListBox.SelectedIndex < 0)
+                {
+                    MessageBox.Show("Сначала необходимо выбрать условие-факт");
+                    return;
+                }
 
+                string currentRuleName = RulesListBox.SelectedItem.ToString()!.Split(':')[0];
+                string variableName = CausesListBox.SelectedItem.ToString()!.Split(" =")[0];
+                string valueName = CausesListBox.SelectedItem.ToString()!.Split("= ")[1];
+
+                AddNewFact addNewFact = new AddNewFact(m_expertSystem, variableName, valueName);
+
+                if (addNewFact.ShowDialog() == false)
+                {
+                    Fact? changedFact = addNewFact.ReturnNewFact;
+                    if (changedFact != null && !m_expertSystem.GetRules()[currentRuleName].GetCauses().Any(fact => (fact.GetValue() == changedFact.GetValue() && fact.GetVariable() == changedFact.GetVariable())))
+                    {
+                        m_expertSystem.GetRules()[currentRuleName].GetCauses().Find(fact => (fact.GetVariable().GetName() == variableName && fact.GetValue() == valueName))!.SetVariable(changedFact.GetVariable());
+                        m_expertSystem.GetRules()[currentRuleName].GetCauses().Find(fact => (fact.GetVariable().GetName() == variableName && fact.GetValue() == valueName))!.SetValue(changedFact.GetValue());
+
+                        UpdateRulesLayout(currentRuleName);
+                    }
+                }
+            }
+            catch (RuleException ruleException)
+            {
+                MessageBox.Show(ruleException.Message);
+            }
         }
-
         private void DeleteCousesFactButton_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                if (CausesListBox.SelectedIndex < 0)
+                {
+                    MessageBox.Show("Сначала необходимо выбрать условие-факт");
+                    return;
+                }
 
+                string selectedRuleName = RulesListBox.SelectedItem.ToString()!.Split(':')[0];
+                string valueNameToDelete = CausesListBox.SelectedItem.ToString()!.Split("= ")[1];
+
+                Fact fact = m_expertSystem.GetRules()[selectedRuleName].GetCauses().Find(fact => fact.GetValue() == valueNameToDelete)!;
+                m_expertSystem.GetRules()[selectedRuleName].GetCauses().Remove(fact);
+
+                UpdateRulesLayout(selectedRuleName);
+            }
+            catch (RuleException ruleException)
+            {
+                MessageBox.Show(ruleException.Message);
+            }
         }
         #endregion
 
         #region TO
         private void InstallConsequenceRuleButton_Click(object sender, RoutedEventArgs e)
         {
+            AddNewFact addNewFact = new AddNewFact(m_expertSystem, false);
+            if (addNewFact.ShowDialog() == false)
+            {
+                Fact? fact = addNewFact.ReturnNewFact;
+                if (fact != null)
+                {
+                    string selectedRule = RulesListBox.SelectedItem.ToString()!.Split(':')[0];
+                    m_expertSystem.GetRules()[selectedRule].SetResult(fact);
 
+                    ConsequenceListBox.Items.Clear();
+                    ConsequenceListBox.Items.Add(fact);
+                    UpdateRulesLayout(selectedRule);
+                }
+            }
         }
-
         private void DeleteConsequenceRuleButton_Copy_Click(object sender, RoutedEventArgs e)
         {
+            if (ConsequenceListBox.SelectedIndex < 0)
+            {
+                MessageBox.Show("Сначала необходимо следствие-факт в правило.");
+                return;
+            }
 
+            if (MessageBox.Show("Действительно удалить вывод текущего правила?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                string selectedRule = RulesListBox.SelectedItem.ToString()!.Split(':')[0];
+                m_expertSystem.GetRules()[selectedRule].SetResult(null);
+                UpdateRulesLayout(selectedRule);
+            }
         }
         #endregion
 
+        private void UpdateRulesLayout(string? selectedRuleName)
+        {
+            RulesListBox.Items.Clear();
+            int index = 0;
+            Rule ruleToUpdate = new();
+
+            foreach (Rule rule in m_expertSystem.GetRules().Values.ToList())
+            {
+                RulesListBox.Items.Add(rule.ToString());
+                if (rule.GetRuleName() == selectedRuleName)
+                {
+                    RulesListBox.SelectedIndex = index;
+                    ruleToUpdate = rule;
+                }
+                index++;
+            }
+            if (selectedRuleName == null) RulesListBox.SelectedIndex = 0;
+
+            UpdateRuleFactsLayout(ruleToUpdate);
+        }
+        private void UpdateRuleFactsLayout(Rule ruleToUpdate)
+        {
+            if (RulesListBox.Items.Count > 0)
+            {
+                if (ruleToUpdate.GetCauses().Count > 0)
+                {
+                    CausesListBox.Items.Clear();
+
+                    foreach (Fact fact in ruleToUpdate.GetCauses())
+                    {
+                        CausesListBox.Items.Add(fact.ToString());
+                    }
+                    CausesListBox.SelectedIndex = 0;
+                }
+                else
+                {
+                    CausesListBox.SelectedIndex = -1;
+                }
+
+                Fact? resultfact = ruleToUpdate.GetResult();
+                ConsequenceListBox.SelectedIndex = (resultfact == null || resultfact.ToString() == " = ") ? -1 : 0;
+            }
+        }
         #endregion
 
         private void AnswerButton_Click(object sender, RoutedEventArgs e)

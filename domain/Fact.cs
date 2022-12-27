@@ -18,7 +18,7 @@ namespace ExpertSystemCourseWork.domain
 
         public Fact()
         {
-            m_variable = new Variable();
+            m_variable = new();
             m_value = string.Empty;
             m_rightlyType = RightlyType.Unknown;
         }
@@ -52,7 +52,7 @@ namespace ExpertSystemCourseWork.domain
         {
             if (newValue != m_value)
             {
-                if (!m_variable.GetDomain().IsExistValue(m_value))
+                if (!m_variable.GetDomain().IsExistValue(newValue))
                 {
                     throw new DomainException("Попытка присвоить переменной значение не из ее домена");
                 }

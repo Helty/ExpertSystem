@@ -1,0 +1,17 @@
+﻿<Window x:Name="AddNewFactWindow" x:Class="ExpertSystemCourseWork.windows.rules.AddNewFact"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ExpertSystemCourseWork.windows.rules"
+        mc:Ignorable="d"
+        Title="AddNewFact" Height="170" Width="325" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Label x:Name="VariableLabel" Content="Переменная:" HorizontalAlignment="Left" Margin="40,24,0,0" VerticalAlignment="Top" Width="100" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="25"/>
+        <ComboBox x:Name="VariablesComboBox" HorizontalAlignment="Left" Margin="40,54,0,0" VerticalAlignment="Top" Width="100" Height="25" SelectionChanged="VariablesComboBox_SelectionChanged"/>
+        <Label x:Name="EqualityLabel" Content="=" HorizontalAlignment="Center" Margin="0,54,0,0" VerticalAlignment="Top" Width="35" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="25"/>
+        <Label x:Name="ValueLabel" Content="Значение:" HorizontalAlignment="Left" Margin="185,24,0,0" VerticalAlignment="Top" Width="100" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="25"/>
+        <ComboBox x:Name="ValuesComboBox" HorizontalAlignment="Left" Margin="185,54,0,0" VerticalAlignment="Top" Width="100" Height="25"/>
+        <Button x:Name="AddNewFactButton" Content="Добавить" HorizontalAlignment="Center" Margin="0,94,0,0" VerticalAlignment="Top" Width="85" Click="AddNewFactButton_Click"/>
+    </Grid>
+</Window>

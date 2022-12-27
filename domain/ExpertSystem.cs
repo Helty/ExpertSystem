@@ -39,27 +39,35 @@ namespace ExpertSystemCourseWork.domain
         {
             return m_workedRules;
         }
-
         public List<Fact> GetProvedFacts()
         {
             return m_provedFacts;
         }
-
         public List<VariableType> GetVariableTypes()
         {
             return m_variableTypes;
+        }
+        public List<string> GetDomainNames()
+        {
+            List<string> result = new();
+
+            foreach (string domainName in m_domains.Keys)
+            {
+                result.Add(domainName);
+            }
+
+            return result;
         }
 
         public Dictionary<string, Domain> GetDomains()
         {
             return m_domains;
         }
-
-        public void SetValueDomains(Dictionary<string, Domain> newValueDomains)
+        public void SetDomains(Dictionary<string, Domain> newDomains)
         {
-            if (newValueDomains != m_domains)
+            if (newDomains != m_domains)
             {
-                m_domains = newValueDomains;
+                m_domains = newDomains;
             }
         }
 
@@ -67,7 +75,6 @@ namespace ExpertSystemCourseWork.domain
         {
             return m_variables;
         }
-
         public void SetVariables(Dictionary<string, Variable> newVariables)
         {
             if (newVariables != m_variables)
@@ -80,25 +87,12 @@ namespace ExpertSystemCourseWork.domain
         {
             return m_rules;
         }
-
         public void SetRules(Dictionary<string, Rule> newRules)
         {
             if (newRules != m_rules)
             {
                 m_rules = newRules;
             }
-        }
-
-        public List<string> GetDomainNames()
-        {
-            List<string> result = new();
-
-            foreach (string domainName in m_domains.Keys) 
-            {
-                result.Add(domainName);
-            }
-
-            return result;
         }
 
         public Fact StartConsult()
@@ -118,7 +112,7 @@ namespace ExpertSystemCourseWork.domain
         {
             bool isFactTrue = true;
 
-            foreach (Fact reasonFact in rule.GetReasons())
+            foreach (Fact reasonFact in rule.GetCauses())
             {
                 if (!Fact.ContainsIn(reasonFact, m_provedFacts))
                 {
@@ -146,11 +140,11 @@ namespace ExpertSystemCourseWork.domain
 
             if (isFactTrue)
             {
-                Fact fact = rule.GetResult();
+                Fact? fact = rule.GetResult();
 
                 if (fact == null || !fact.GetVariable().GetDomain().GetValueList().Contains(fact.GetValue()))
                 {
-                    throw new DomainException("Правило " + rule.GetName() + " пытается присвоить значение не из домена!");
+                    throw new DomainException("Правило " + rule.GetRuleName() + " пытается присвоить значение не из домена!");
                 }
 
                 rule.SetWorkedType(RuleWorkType.Signifi);
@@ -182,12 +176,12 @@ namespace ExpertSystemCourseWork.domain
 
             foreach (Rule rule in m_rules.Values)
             {
-                Fact ruleResult = rule.GetResult();
+                Fact? ruleResult = rule.GetResult();
 
                 if (ruleResult != null && ruleResult.GetVariable().CompareTo(goal) == 0)
                 {
                     if (CheckRule(rule) == RightlyType.Unknown) continue;
-                    return rule.GetResult();
+                    return rule.GetResult()!;
                 }
             }
 

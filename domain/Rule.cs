@@ -9,29 +9,30 @@ namespace ExpertSystemCourseWork.domain
         private string m_name;
         private string m_argumentation;
 
-        private List<Fact> m_reasons;
-        private Fact m_result;
+        private List<Fact> m_causes;
+        private Fact? m_result;
         private RuleWorkType m_workType;
 
         public Rule()
         {
             m_name = string.Empty;
             m_argumentation = string.Empty;
-            m_reasons = new List<Fact>();
-            m_result = new Fact();
+
+            m_causes = new();
+            m_result = null;
             m_workType = RuleWorkType.No;
         }
 
-        public List<Fact> GetReasons()
+        public List<Fact> GetCauses()
         {
-            return m_reasons;
+            return m_causes;
         }
 
-        public void SetReasons(List<Fact> newReasons)
+        public void SetCauses(List<Fact> newCauses)
         {
-            if (newReasons != m_reasons)
+            if (newCauses != m_causes)
             {
-                m_reasons = newReasons;
+                m_causes = newCauses;
             }
         }
 
@@ -48,7 +49,7 @@ namespace ExpertSystemCourseWork.domain
             }
         }
 
-        public string GetName()
+        public string GetRuleName()
         {
             return m_name;
         }
@@ -61,12 +62,12 @@ namespace ExpertSystemCourseWork.domain
             }
         }
 
-        public Fact GetResult()
+        public Fact? GetResult()
         {
             return m_result;
         }
 
-        public void SetResult(Fact newResult)
+        public void SetResult(Fact? newResult)
         {
             if (newResult != m_result)
             {
@@ -87,59 +88,59 @@ namespace ExpertSystemCourseWork.domain
             }
         }
 
-        public Fact GetReason(int position)
+        public Fact GetCause(int position)
         {
-            if ((position > m_reasons.Count - 1) || (position < 0))
+            if ((position > m_causes.Count - 1) || (position < 0))
             {
                 throw new RuleException("Индекс находился вне границ списка посылок");
             }
-            return m_reasons[position];
+            return m_causes[position];
         }
 
-        public void InsertReason(Fact fact, int position)
+        public void InsertCause(Fact fact, int position)
         {
             if (!Contains(fact))
             {
-                if ((position < 0) || (position > m_reasons.Count))
+                if ((position < 0) || (position > m_causes.Count))
                 {
                     throw new RuleException("Индекс находился вне границ списка посылок");
                 }
 
-                m_reasons.Add(fact);
-                Move(m_reasons.Count - 1, position);
+                m_causes.Add(fact);
+                Move(m_causes.Count - 1, position);
             }
         }
 
-        public int ReasonCount()
+        public int CausesCount()
         {
-            return m_reasons.Count;
+            return m_causes.Count;
         }
 
         public void Move(int oldPosition, int newPosition)
         {
-            if ((oldPosition > m_reasons.Count - 1) || 
-                (newPosition > m_reasons.Count - 1) || 
+            if ((oldPosition > m_causes.Count - 1) || 
+                (newPosition > m_causes.Count - 1) || 
                 (oldPosition < 0) || (newPosition < 0))
             {
                 throw new RuleException("Индекс находился вне границ списка посылок");
             }
 
-            Fact oldReason = m_reasons[oldPosition];
+            Fact oldReason = m_causes[oldPosition];
             if (oldPosition > newPosition)
             {
                 for (int i = oldPosition; i > newPosition; i--)
                 {
-                    m_reasons[i] = m_reasons[i - 1];
+                    m_causes[i] = m_causes[i - 1];
                 }
             }
             else
             {
                 for (int i = oldPosition; i < newPosition; i++)
                 {
-                    m_reasons[oldPosition] = m_reasons[i + 1];
+                    m_causes[oldPosition] = m_causes[i + 1];
                 }
             }
-            m_reasons[newPosition] = oldReason;
+            m_causes[newPosition] = oldReason;
         }
 
         public void Move(Fact fact, int newPosition)
@@ -153,34 +154,34 @@ namespace ExpertSystemCourseWork.domain
 
         public void Remove(int position)
         {
-            if ((position > m_reasons.Count - 1) || (position < 0))
+            if ((position > m_causes.Count - 1) || (position < 0))
             {
                 throw new RuleException("Индекс находился вне границ списка посылок");
             }
 
-            if (m_reasons.Count == 1)
+            if (m_causes.Count == 1)
             {
                 throw new RuleException("Попытка удалить едиственную посылку в правиле");
             }
 
-            m_reasons.RemoveAt(position);
+            m_causes.RemoveAt(position);
         }
 
         public void Remove(Fact fact)
         {
             if (!Contains(fact))
             {
-                if (m_reasons.Count == 1)
+                if (m_causes.Count == 1)
                 {
                     throw new RuleException("Попытка удалить едиственную посылку в правиле");
                 }
-                m_reasons.RemoveAt(IndexOf(fact));
+                m_causes.RemoveAt(IndexOf(fact));
             }
         }
 
         public bool Contains(Fact fact)
         {
-            foreach (Fact f in m_reasons)
+            foreach (Fact f in m_causes)
             {
                 if (f.CompareTo(fact) == 0)
                 {
@@ -192,9 +193,9 @@ namespace ExpertSystemCourseWork.domain
 
         public int IndexOf(Fact fact)
         {
-            for (int reasonPos = 0; reasonPos < m_reasons.Count; reasonPos++)
+            for (int reasonPos = 0; reasonPos < m_causes.Count; reasonPos++)
             {
-                if (m_reasons[reasonPos].CompareTo(fact) == 0)
+                if (m_causes[reasonPos].CompareTo(fact) == 0)
                     return reasonPos;
             }
             return -1;
@@ -202,14 +203,14 @@ namespace ExpertSystemCourseWork.domain
 
         public override string ToString()
         {
-            if (m_reasons.Count > 0)
+            if (m_causes.Count > 0)
             {
-                string start = "ЕСЛИ ";
-                for (int i = 0; i < m_reasons.Count - 1; i++)
+                string start = m_name + ": ЕСЛИ ";
+                for (int i = 0; i < m_causes.Count - 1; i++)
                 {
-                    start += "(" + m_reasons[i].ToString() + ") И ";
+                    start += "(" + m_causes[i].ToString() + ") И ";
                 }
-                start += "(" + m_reasons[m_reasons.Count - 1] + ") ТОГДА ";
+                start += "(" + m_causes[m_causes.Count - 1] + ") ТОГДА ";
                 if (m_result != null)
                 {
                     start += m_result.ToString();
@@ -218,7 +219,7 @@ namespace ExpertSystemCourseWork.domain
             }
             else
             {
-                return "";
+                return m_name + ": ";
             }
         }
     }

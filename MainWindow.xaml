@@ -20,14 +20,14 @@
         <ListBox x:Name="VariablesListBox" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="40,80,0,0" SelectionChanged="VariablesListBox_SelectionChanged" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False" HorizontalAlignment="Left" Width="225" Height="139" VerticalAlignment="Top"/>
         <Button x:Name="DeleteVariableButton" Content="Удалить" HorizontalAlignment="Left" Margin="422,225,0,0" VerticalAlignment="Top" Width="122" Click="DeleteVariableButton_Click"/>
         <Label x:Name="RulesTotalLabel" Content="ПРАВИЛА" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontWeight="Bold" Margin="40,250,370,445"/>
-        <ListBox x:Name="RulesListBox" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="40,332,523,206" SelectionChanged="RulesListBox_SelectionChanged"/>
+        <ListBox x:Name="RulesListBox" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="40,332,0,0" SelectionChanged="RulesListBox_SelectionChanged" Height="205" VerticalAlignment="Top" HorizontalAlignment="Left" Width="342"/>
         <Label x:Name="DescriptionRuleLabel" Content="Пояснение к правилу:" HorizontalAlignment="Left" Margin="395,331,0,0" VerticalAlignment="Top" Height="26" Width="150" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
         <TextBox x:Name="InputDescriptionRuleTextBox" HorizontalAlignment="Left" Margin="394,362,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="150" Height="94" IsReadOnly="True"/>
         <Button x:Name="AddRuleButton" Content="Добавить правило" HorizontalAlignment="Left" Margin="394,461,0,0" VerticalAlignment="Top" Height="24" Width="150" Click="AddRuleButton_Click"/>
         <Label x:Name="IfLabel" Content="ЕСЛИ:" Margin="40,543,662,0" VerticalAlignment="Top" Height="34" FontWeight="Bold"/>
         <Label x:Name="ElseLabel" Content="TO:" Margin="312,543,390,0" VerticalAlignment="Top" Height="34" FontWeight="Bold"/>
-        <ListBox x:Name="CausesListBox" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="40,582,633,48"/>
-        <ListBox x:Name="ConsequenceListBox" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="312,582,361,48"/>
+        <ListBox x:Name="CausesListBox" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="40,582,0,0" Height="113" VerticalAlignment="Top" HorizontalAlignment="Left" Width="232"/>
+        <ListBox x:Name="ConsequenceListBox" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="312,582,0,0" Height="113" VerticalAlignment="Top" HorizontalAlignment="Left" Width="232"/>
         <Button x:Name="AddCousesFactButton" Content="Добавить" HorizontalAlignment="Left" Margin="40,707,0,16" Width="75" Click="AddCousesFactButton_Click"/>
         <Button x:Name="ChangeCousesFactButton" Content="Изменить" HorizontalAlignment="Left" Margin="121,707,0,0" VerticalAlignment="Top" Width="71" Click="ChangeCousesFactButton_Click"/>
         <Button x:Name="DeleteCousesFactButton" Content="Удалить" HorizontalAlignment="Left" Margin="197,707,0,0" VerticalAlignment="Top" Width="75" Click="DeleteCousesFactButton_Click"/>
@@ -49,13 +49,11 @@
         <Label x:Name="VariableNameLabel" Content="Имя:" Margin="292,74,0,643" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Width="77"/>
         <Button x:Name="AddNewVariableButton" Content="Добавить новую переменную" Margin="40,225,0,0" Click="AddNewVariableButton_Click" HorizontalAlignment="Left" Width="224" Height="20" VerticalAlignment="Top"/>
         <Label x:Name="WorkedOutRulesLabel" Content="ОТРАБОТАННЫЕ ПРАВИЛА" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontWeight="Bold" Margin="579,0,-28,704"/>
-        <TreeView x:Name="RulesTreeView" Margin="579,44,-28,258"/>
+        <TreeView x:Name="RulesTreeView" Margin="579,44,-28,0" Height="441" VerticalAlignment="Top"/>
         <Button x:Name="DeleteConsequenceRuleButton" Content="Удалить" Margin="435,0,361,16" VerticalAlignment="Bottom" Click="DeleteConsequenceRuleButton_Copy_Click"/>
         <Label x:Name="PrognosisLabel" Content="ПРОГНОЗ" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontWeight="Bold" Margin="579,491,-28,213"/>
-        <TextBlock x:Name="PrognosisTextBox" HorizontalAlignment="Left" Margin="579,535,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="160" Width="354"/>
+        <TextBlock x:Name="PrognosisTextBox" Margin="579,535,-28,48" TextWrapping="Wrap"/>
         <Label x:Name="TargetLabel" Content="Цель:" HorizontalAlignment="Left" Margin="562,704,0,0" VerticalAlignment="Top" Height="26" Width="47"/>
         <ComboBox x:Name="TargetVariableComboBox" HorizontalAlignment="Left" Margin="614,707,0,0" VerticalAlignment="Top" Width="120" Height="20"/>
-        <Button x:Name="LoadButton" Content="Загрузить" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" Width="68" Click="LoadButton_Click"/>
-        <Button x:Name="SaveButton" Content="Сохранить" HorizontalAlignment="Left" Margin="84,5,0,0" VerticalAlignment="Top" Width="68" Click="SaveButton_Click"/>
     </Grid>
 </Window>

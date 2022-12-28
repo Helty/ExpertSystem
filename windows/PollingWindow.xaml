@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ExpertSystemCourseWork.windows"
         mc:Ignorable="d"
-        Title="PollingWindow" Height="296" Width="479">
+        Title="Консультация" Height="296" Width="479" WindowStartupLocation="CenterScreen">
     <Grid>
         <GroupBox x:Name="AnswerOptionsGroupBox" Header="Варианты ответа:" Margin="64,0,61,0" Height="116" VerticalAlignment="Center"/>
         <Button x:Name="AnswerButton" Content="Ответить" Margin="201,223,198,0" Click="AnswerButton_Click" Height="26" VerticalAlignment="Top"/>

@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-
-using ExpertSystemCourseWork.common;
+﻿using ExpertSystemCourseWork.common;
+using System.Collections.Generic;
 
 namespace ExpertSystemCourseWork.domain
 {
@@ -78,8 +77,8 @@ namespace ExpertSystemCourseWork.domain
 
         public void Move(int oldPosition, int newPosition)
         {
-            if ((oldPosition > m_valueList.Count - 1) || 
-                (newPosition > m_valueList.Count - 1) || 
+            if ((oldPosition > m_valueList.Count - 1) ||
+                (newPosition > m_valueList.Count - 1) ||
                 (oldPosition < 0) || (newPosition < 0))
             {
                 throw new DomainException("Индекс находился вне границ списка значений");

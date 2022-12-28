@@ -1,12 +1,5 @@
 ﻿using ExpertSystemCourseWork.common;
-using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.Media3D;
-using System.Xml.Linq;
 
 namespace ExpertSystemCourseWork.domain
 {
@@ -83,8 +76,8 @@ namespace ExpertSystemCourseWork.domain
         {
             int isCompareVariable = m_variable.CompareTo(fact.GetVariable());
 
-            return isCompareVariable != 0 
-                ? isCompareVariable 
+            return isCompareVariable != 0
+                ? isCompareVariable
                 : m_value.CompareTo(fact.GetValue());
         }
 

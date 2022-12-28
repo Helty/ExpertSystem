@@ -1,14 +1,11 @@
 ﻿using ExpertSystemCourseWork.common;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 
 namespace ExpertSystemCourseWork.domain
 {
     public class ExpertSystem
     {
-        private readonly List<VariableType> m_variableTypes = new() 
+        private readonly List<VariableType> m_variableTypes = new()
         {
             VariableType.Queried,
             VariableType.Deducted,

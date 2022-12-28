@@ -1,5 +1,4 @@
-﻿using ExpertSystemCourseWork;
-using ExpertSystemCourseWork.domain;
+﻿using ExpertSystemCourseWork.domain;
 using System.Linq;
 using System.Windows;
 

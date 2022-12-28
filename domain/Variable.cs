@@ -1,5 +1,4 @@
-﻿using System;
-using ExpertSystemCourseWork.common;
+﻿using ExpertSystemCourseWork.common;
 
 namespace ExpertSystemCourseWork.domain
 {

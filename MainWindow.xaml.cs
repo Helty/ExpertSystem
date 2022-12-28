@@ -2,13 +2,9 @@
 using ExpertSystemCourseWork.domain;
 using ExpertSystemCourseWork.windows;
 using ExpertSystemCourseWork.windows.rules;
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -28,7 +24,7 @@ namespace ExpertSystemCourseWork
         };
 
         private ExpertSystem m_expertSystem;
-        
+
         public MainWindow()
         {
             InitializeComponent();
@@ -42,6 +38,163 @@ namespace ExpertSystemCourseWork
         {
             ExpertSystem expertSystem = new();
 
+            string domainNameThreat0 = "Да-Нет";
+            Domain domain0 = new(domainNameThreat0, new List<string>()
+                {
+                    "Да",
+                    "Нет",
+                }
+            );
+
+            string domainNameThreat1 = "Действие";
+            Domain domain1 = new(domainNameThreat1, new List<string>()
+                {
+                    "Ждать",
+                    "Перевернуть",
+                    "Снимать",
+                }
+            );
+
+            string domainNameThreat2 = "Вид мяса";
+            Domain domain2 = new(domainNameThreat2, new List<string>()
+                {
+                    "Курица",
+                    "Свинина",
+                }
+            );
+
+            string domainNameThreat3 = "Промежуток времени";
+            Domain domain3 = new(domainNameThreat3, new List<string>()
+                {
+                    "Только что положил",
+                    "Ну минут 10",
+                    "Да долго уже",
+                }
+            );
+
+            string domainNameThreat4 = "Степень поджаристости";
+            Domain domain4 = new(domainNameThreat4, new List<string>()
+                {
+                    "Совсем сырое ещё",
+                    "Начинает поджариваться",
+                    "Поджаристое",
+                    "Уже чёрное",
+                }
+            );
+
+            string domainNameThreat5 = "Количество человек";
+            Domain domain5 = new(domainNameThreat5, new List<string>()
+                {
+                    "Меньше 5",
+                    "5 или больше",
+                }
+            );
+
+            expertSystem.GetDomains().Add(domainNameThreat0, domain0);
+            expertSystem.GetDomains().Add(domainNameThreat1, domain1);
+            expertSystem.GetDomains().Add(domainNameThreat2, domain2);
+            expertSystem.GetDomains().Add(domainNameThreat3, domain3);
+            expertSystem.GetDomains().Add(domainNameThreat4, domain4);
+            expertSystem.GetDomains().Add(domainNameThreat5, domain5);
+
+            string variableNameThreat1 = "Действие";
+            Variable variableThreat1 = new(
+                variableNameThreat1,
+                domain1,
+                VariableType.Deducted
+            );
+
+            string variableNameThreat2 = "Готово с одной стороны";
+            Variable variableThreat2 = new(
+                variableNameThreat2,
+                domain0,
+                VariableType.Deducted
+            );
+
+            string variableNameThreat3 = "Готово с двух сторон";
+            Variable variableThreat3 = new(
+                variableNameThreat3,
+                domain0,
+                VariableType.Deducted
+            );
+
+            string variableNameThreat4 = "Сторона готова";
+            Variable variableThreat4 = new(
+                variableNameThreat4,
+                domain0,
+                VariableType.Deducted
+            );
+
+            string variableNameThreat5 = "Уже переворачивали";
+            Variable variableThreat5 = new(
+                variableNameThreat5,
+                domain0,
+                VariableType.Queried
+            );
+
+            string variableNameThreat6 = "Курица готова";
+            Variable variableThreat6 = new(
+                variableNameThreat6,
+                domain0,
+                VariableType.Deducted
+            );
+
+            string variableNameThreat7 = "Свинина готова";
+            Variable variableThreat7 = new(
+                variableNameThreat7,
+                domain0,
+                VariableType.Deducted
+            );
+
+            string variableNameThreat8 = "Вид мяса";
+            Variable variableThreat8 = new(
+                variableNameThreat8,
+                domain2,
+                VariableType.Queried
+            );
+
+            string variableNameThreat9 = "Время жарки";
+            Variable variableThreat9 = new(
+                variableNameThreat9,
+                domain3,
+                VariableType.Queried
+            );
+
+            string variableNameThreat10 = "Степень поджаристости";
+            Variable variableThreat10 = new(
+                variableNameThreat10,
+                domain4,
+                VariableType.Queried
+            );
+
+            string variableNameThreat11 = "Готово по мнению большинства";
+            Variable variableThreat11 = new(
+                variableNameThreat11,
+                domain0,
+                VariableType.Deducted
+            );
+
+            string variableNameThreat12 = "Количество человек";
+            Variable variableThreat12 = new(
+                variableNameThreat12,
+                domain5,
+                VariableType.Queried
+            );
+
+            expertSystem.GetVariables().Add(variableNameThreat1, variableThreat1);
+            expertSystem.GetVariables().Add(variableNameThreat2, variableThreat2);
+            expertSystem.GetVariables().Add(variableNameThreat3, variableThreat3);
+            expertSystem.GetVariables().Add(variableNameThreat4, variableThreat4);
+            expertSystem.GetVariables().Add(variableNameThreat5, variableThreat5);
+            expertSystem.GetVariables().Add(variableNameThreat6, variableThreat6);
+            expertSystem.GetVariables().Add(variableNameThreat7, variableThreat7);
+            expertSystem.GetVariables().Add(variableNameThreat8, variableThreat8);
+            expertSystem.GetVariables().Add(variableNameThreat9, variableThreat9);
+            expertSystem.GetVariables().Add(variableNameThreat10, variableThreat10);
+            expertSystem.GetVariables().Add(variableNameThreat11, variableThreat11);
+            expertSystem.GetVariables().Add(variableNameThreat12, variableThreat12);
+
+            /*
             string variableNameThreat = "Угроза";
 
             string domainNameThreat = "Угрозы";
@@ -80,13 +233,13 @@ namespace ExpertSystemCourseWork
             expertSystem.GetDomains().Add(domainNameYesNo, domainYesNo);
 
             expertSystem.GetVariables().Add(variableNameThreat, variableThreat);
-
+            */
             return expertSystem;
         }
 
         private void UpdateApplicationLayout()
         {
-            UpdateVariablesLayout();
+            UpdateVariablesLayout(null);
             UpdateRulesLayout(null);
 
             ChangeRuleButton.IsEnabled = false;
@@ -115,7 +268,7 @@ namespace ExpertSystemCourseWork
 
             #region домен
             Domain variableDomain = variable.GetDomain();
-            
+
             if (variableDomain == null)
             {
                 DomainComboBox.SelectedIndex = -1;
@@ -247,7 +400,7 @@ namespace ExpertSystemCourseWork
                 if (newVariable == null) return;
 
                 m_expertSystem.GetVariables().Add(newVariableName, newVariable);
-                UpdateVariablesLayout();
+                UpdateVariablesLayout(newVariableName);
 
                 MessageBox.Show($"Переменная с именем '{newVariableName}' успешно добавлена.");
             }
@@ -267,7 +420,7 @@ namespace ExpertSystemCourseWork
             string oldVariableName = VariablesListBox.SelectedItem.ToString()!;
             string? newVariableName = VariableNameTextBox.Text;
 
-            if (newVariableName != null && m_expertSystem.GetVariables().Keys.Contains(oldVariableName!))
+            if (newVariableName != null && m_expertSystem.GetVariables().ContainsKey(oldVariableName!))
             {
                 Variable? newVariable = CreateVariableWithCurrentValue(newVariableName);
                 if (newVariable == null) return;
@@ -282,8 +435,7 @@ namespace ExpertSystemCourseWork
                     m_expertSystem.GetVariables().Add(newVariableName, newVariable);
                 }
 
-                UpdateVariablesLayout();
-                MessageBox.Show("Переменная успешно изменена.");
+                UpdateVariablesLayout(newVariableName);
             }
             else
             {
@@ -293,11 +445,10 @@ namespace ExpertSystemCourseWork
         private void DeleteVariableButton_Click(object sender, RoutedEventArgs e)
         {
             string? variableNameToDelete = VariablesListBox.SelectedItem.ToString();
-            if (variableNameToDelete != null && m_expertSystem.GetVariables().Keys.Contains(variableNameToDelete))
+            if (variableNameToDelete != null && m_expertSystem.GetVariables().ContainsKey(variableNameToDelete))
             {
                 m_expertSystem.GetVariables().Remove(variableNameToDelete);
-                UpdateVariablesLayout();
-                MessageBox.Show($"Переменная с именен: '{variableNameToDelete}' успешно удалена.");
+                UpdateVariablesLayout(null);
             }
             else
             {
@@ -324,18 +475,25 @@ namespace ExpertSystemCourseWork
             return newVariable;
         }
 
-        private void UpdateVariablesLayout()
+        private void UpdateVariablesLayout(string? selectedVariableName)
         {
             VariablesListBox.Items.Clear();
             TargetVariableComboBox.Items.Clear();
 
+            int index = 0;
             foreach (string variableName in m_expertSystem.GetVariables().Keys)
             {
+                if (variableName == selectedVariableName)
+                {
+                    VariablesListBox.SelectedIndex = index;
+                }
+
                 VariablesListBox.Items.Add(variableName);
                 TargetVariableComboBox.Items.Add(variableName);
+                index++;
             }
 
-            VariablesListBox.SelectedIndex = 0;
+            if (selectedVariableName == null) VariablesListBox.SelectedIndex = 0;
             TargetVariableComboBox.SelectedIndex = -1;
         }
         private void UpdateDomainValuesLayout(string domainName)
@@ -432,7 +590,6 @@ namespace ExpertSystemCourseWork
                 {
                     m_expertSystem.GetRules().Remove(ruleToChange.GetRuleName());
                     m_expertSystem.GetRules().Add(changedRule!.GetRuleName(), changedRule);
-                    MessageBox.Show($"Правило '{changedRule.GetRuleName()}' успешно изменено.");
                     UpdateRulesLayout(changedRule.GetRuleName());
                 }
             }
@@ -616,9 +773,7 @@ namespace ExpertSystemCourseWork
         }
         private void UpdateWorkedRulesLayout()
         {
-            var ifItem = new TreeViewItem { Header = "ЕСЛИ" };
-            var elseItem = new TreeViewItem { Header = "ТО" };
-            var becauseItem = new TreeViewItem { Header = "ТАК КАК" };
+            RulesTreeView.Items.Clear();
 
             foreach (Rule rule in m_expertSystem.GetWorkedRules())
             {
@@ -627,6 +782,7 @@ namespace ExpertSystemCourseWork
                     var headItem = new TreeViewItem { Header = rule.GetRuleName() };
 
                     RulesTreeView.Items.Add(headItem);
+                    var ifItem = new TreeViewItem { Header = "ЕСЛИ" };
 
                     headItem.Items.Add(ifItem);
                     foreach (Fact fact in rule.GetCauses())
@@ -634,9 +790,11 @@ namespace ExpertSystemCourseWork
                         ifItem.Items.Add(fact.ToString());
                     }
 
+                    var elseItem = new TreeViewItem { Header = "ТО" };
                     headItem.Items.Add(elseItem);
                     elseItem.Items.Add(rule.GetResult()!.ToString());
 
+                    var becauseItem = new TreeViewItem { Header = "ТАК КАК" };
                     headItem.Items.Add(becauseItem);
                     becauseItem.Items.Add(rule.GetArgumentation());
                 }
@@ -730,7 +888,7 @@ namespace ExpertSystemCourseWork
 
             foreach (Fact causeFact in rule.GetCauses())
             {
-                if (!m_expertSystem.GetProvedFacts().Contains(causeFact)) //Fact.ContainsIn(reasonFact, m_provedFacts)
+                if (!Fact.ContainsIn(causeFact, m_expertSystem.GetProvedFacts()))
                 {
                     Fact fact = Consult(causeFact.GetVariable());
                     m_expertSystem.GetProvedFacts().Add(fact);
@@ -747,7 +905,7 @@ namespace ExpertSystemCourseWork
                 }
                 else
                 {
-                    Fact fact = m_expertSystem.GetProvedFacts().Find(fact => fact == causeFact)!; // Fact.GetFromList(reasonFact, m_provedFacts)
+                    Fact fact = Fact.GetFromList(causeFact, m_expertSystem.GetProvedFacts())!;
                     isFactTrue = (fact.GetRightlyType() == RightlyType.Yes);
                 }
 
@@ -763,70 +921,21 @@ namespace ExpertSystemCourseWork
                     throw new DomainException($"Правило {rule.GetRuleName()} пытается присвоить значение не из домена!");
                 }
 
+                fact.SetRightlyType(RightlyType.Yes);
+                m_expertSystem.GetProvedFacts().Add(fact);
+
                 rule.SetWorkedType(RuleWorkType.Signifi);
                 m_expertSystem.GetWorkedRules().Add(rule);
                 UpdateWorkedRulesLayout();
-
-                fact.SetRightlyType(RightlyType.Yes);
-                m_expertSystem.GetProvedFacts().Add(fact);
 
                 return RightlyType.Yes;
             }
 
             rule.SetWorkedType(RuleWorkType.Unsignify);
-            m_expertSystem.GetWorkedRules().Add(rule);
+            //m_expertSystem.GetWorkedRules().Add(rule);
             UpdateWorkedRulesLayout();
 
             return RightlyType.Unknown;
-        }
-
-        private void LoadButton_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                OpenFileDialog openFileDialog = new()
-                {
-                    Filter = "Expert System (*.ExpertSystem)|*.ExpertSystem"
-                };
-
-                if (openFileDialog.ShowDialog() == true)
-                {
-                    string jsonString = File.ReadAllText(openFileDialog.FileName);
-                    m_expertSystem = JsonSerializer.Deserialize<ExpertSystem>(jsonString)!;
-                    MessageBox.Show("Экспертная система успешно загружена!", "Загрузка", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                    UpdateRulesLayout(null);
-                    UpdateWorkedRulesLayout();
-
-                    UpdateVariablesLayout();
-                    UpdateDomainLayout();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                SaveFileDialog saveFileDialog = new()
-                {
-                    Filter = "Expert System (*.ExpertSystem)|*.ExpertSystem"
-                };
-
-                if (saveFileDialog.ShowDialog() == true)
-                {
-                    string jsonString = JsonSerializer.Serialize(m_expertSystem);
-                    File.WriteAllText(saveFileDialog.FileName, jsonString);
-                    MessageBox.Show("Экспертная система успешно сохранена!", "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
         }
     }
 }

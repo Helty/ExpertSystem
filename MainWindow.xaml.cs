@@ -38,202 +38,204 @@ namespace ExpertSystemCourseWork
         {
             ExpertSystem expertSystem = new();
 
-            string domainNameThreat0 = "Да-Нет";
-            Domain domain0 = new(domainNameThreat0, new List<string>()
-                {
-                    "Да",
-                    "Нет",
-                }
-            );
-
-            string domainNameThreat1 = "Действие";
-            Domain domain1 = new(domainNameThreat1, new List<string>()
-                {
-                    "Ждать",
-                    "Перевернуть",
-                    "Снимать",
-                }
-            );
-
-            string domainNameThreat2 = "Вид мяса";
-            Domain domain2 = new(domainNameThreat2, new List<string>()
-                {
-                    "Курица",
-                    "Свинина",
-                }
-            );
-
-            string domainNameThreat3 = "Промежуток времени";
-            Domain domain3 = new(domainNameThreat3, new List<string>()
-                {
-                    "Только что положил",
-                    "Ну минут 10",
-                    "Да долго уже",
-                }
-            );
-
-            string domainNameThreat4 = "Степень поджаристости";
-            Domain domain4 = new(domainNameThreat4, new List<string>()
-                {
-                    "Совсем сырое ещё",
-                    "Начинает поджариваться",
-                    "Поджаристое",
-                    "Уже чёрное",
-                }
-            );
-
-            string domainNameThreat5 = "Количество человек";
-            Domain domain5 = new(domainNameThreat5, new List<string>()
-                {
-                    "Меньше 5",
-                    "5 или больше",
-                }
-            );
-
-            expertSystem.GetDomains().Add(domainNameThreat0, domain0);
-            expertSystem.GetDomains().Add(domainNameThreat1, domain1);
-            expertSystem.GetDomains().Add(domainNameThreat2, domain2);
-            expertSystem.GetDomains().Add(domainNameThreat3, domain3);
-            expertSystem.GetDomains().Add(domainNameThreat4, domain4);
-            expertSystem.GetDomains().Add(domainNameThreat5, domain5);
-
-            string variableNameThreat1 = "Действие";
-            Variable variableThreat1 = new(
-                variableNameThreat1,
-                domain1,
-                VariableType.Deducted
-            );
-
-            string variableNameThreat2 = "Готово с одной стороны";
-            Variable variableThreat2 = new(
-                variableNameThreat2,
-                domain0,
-                VariableType.Deducted
-            );
-
-            string variableNameThreat3 = "Готово с двух сторон";
-            Variable variableThreat3 = new(
-                variableNameThreat3,
-                domain0,
-                VariableType.Deducted
-            );
-
-            string variableNameThreat4 = "Сторона готова";
-            Variable variableThreat4 = new(
-                variableNameThreat4,
-                domain0,
-                VariableType.Deducted
-            );
-
-            string variableNameThreat5 = "Уже переворачивали";
-            Variable variableThreat5 = new(
-                variableNameThreat5,
-                domain0,
-                VariableType.Queried
-            );
-
-            string variableNameThreat6 = "Курица готова";
-            Variable variableThreat6 = new(
-                variableNameThreat6,
-                domain0,
-                VariableType.Deducted
-            );
-
-            string variableNameThreat7 = "Свинина готова";
-            Variable variableThreat7 = new(
-                variableNameThreat7,
-                domain0,
-                VariableType.Deducted
-            );
-
-            string variableNameThreat8 = "Вид мяса";
-            Variable variableThreat8 = new(
-                variableNameThreat8,
-                domain2,
-                VariableType.Queried
-            );
-
-            string variableNameThreat9 = "Время жарки";
-            Variable variableThreat9 = new(
-                variableNameThreat9,
-                domain3,
-                VariableType.Queried
-            );
-
-            string variableNameThreat10 = "Степень поджаристости";
-            Variable variableThreat10 = new(
-                variableNameThreat10,
-                domain4,
-                VariableType.Queried
-            );
-
-            string variableNameThreat11 = "Готово по мнению большинства";
-            Variable variableThreat11 = new(
-                variableNameThreat11,
-                domain0,
-                VariableType.Deducted
-            );
-
-            string variableNameThreat12 = "Количество человек";
-            Variable variableThreat12 = new(
-                variableNameThreat12,
-                domain5,
-                VariableType.Queried
-            );
-
-            expertSystem.GetVariables().Add(variableNameThreat1, variableThreat1);
-            expertSystem.GetVariables().Add(variableNameThreat2, variableThreat2);
-            expertSystem.GetVariables().Add(variableNameThreat3, variableThreat3);
-            expertSystem.GetVariables().Add(variableNameThreat4, variableThreat4);
-            expertSystem.GetVariables().Add(variableNameThreat5, variableThreat5);
-            expertSystem.GetVariables().Add(variableNameThreat6, variableThreat6);
-            expertSystem.GetVariables().Add(variableNameThreat7, variableThreat7);
-            expertSystem.GetVariables().Add(variableNameThreat8, variableThreat8);
-            expertSystem.GetVariables().Add(variableNameThreat9, variableThreat9);
-            expertSystem.GetVariables().Add(variableNameThreat10, variableThreat10);
-            expertSystem.GetVariables().Add(variableNameThreat11, variableThreat11);
-            expertSystem.GetVariables().Add(variableNameThreat12, variableThreat12);
-
-            /*
-            string variableNameThreat = "Угроза";
-
-            string domainNameThreat = "Угрозы";
-            string domainNameYesNo = "Да-Нет";
-
-            Domain domainThreat = new(domainNameThreat, new List<string>()
+            #region домены
+            string domainName1 = "Угрозы";
+            Domain domain1 = new(domainName1, new List<string>()
                 {
                     "УБИ.001: Угроза автоматического распространения вредоносного кода в грид-системе",
                     "УБИ.002: Угроза агрегирования данных, передаваемых в грид-системе",
                     "УБИ.003: Угроза использования слабостей криптографических алгоритмов и уязвимостей в программном обеспечении их реализации",
-                    "УБИ.004: Угроза аппаратного сброса пароля BIOS",
-                    "УБИ.005: Угроза внедрения вредоносного кода в BIOS",
-                    "УБИ.006: Угроза внедрения кода или данных",
-                    "УБИ.007: Угроза воздействия на программы с высокими привилегиями",
-                    "УБИ.008: Угроза восстановления и/или повторного использования аутентификационной информации",
-                    "УБИ.009: Угроза восстановления предыдущей уязвимой версии BIOS",
-                    "УБИ.010: Угроза выхода процесса за пределы виртуальной машины",
                 }
             );
 
-            Domain domainYesNo = new(domainNameYesNo, new List<string>()
+            string domainName2 = "Да-Нет";
+            Domain domain2 = new(domainName2, new List<string>()
                 {
                     "Да",
                     "Нет",
                 }
             );
 
+            string domainName3 = "Источники угрозы";
+            Domain domain3 = new(domainName3, new List<string>()
+                {
+                    "Внешний нарушитель со средним потенциалом",
+                    "Внутренний нарушитель со средним потенциалом",
+                }
+            );
 
-            Variable variableThreat = new(
-                variableNameThreat,
-                domainThreat,
+            string domainName4 = "Объекты воздействия";
+            Domain domain4 = new(domainName4, new List<string>()
+                {
+                    "Ресурсные центры грид-системы",
+                    "Сетевой трафик",
+                    "Системное программное обеспечение"
+                }
+            );
+
+            string domainName5 = "Последствия реализации угрозы";
+            Domain domain5 = new(domainName5, new List<string>()
+                {
+                    "Нарушение конфиденциальности",
+                    "Нарушение целостности",
+                    "Нарушение доступности"
+                }
+            );
+
+            string domainName6 = "Уровень автоматизации";
+            Domain domain6 = new(domainName6, new List<string>()
+                {
+                    "Высокий",
+                    "Низкий",
+                }
+            );
+
+            string domainName7 = "Каналы сети интернет";
+            Domain domain7 = new(domainName7, new List<string>()
+                {
+                    "Защищённый",
+                    "Не защищённый",
+                }
+            );
+
+
+            expertSystem.GetDomains().Add(domainName1, domain1);
+            expertSystem.GetDomains().Add(domainName2, domain2);
+            expertSystem.GetDomains().Add(domainName3, domain3);
+            expertSystem.GetDomains().Add(domainName4, domain4);
+            expertSystem.GetDomains().Add(domainName5, domain5);
+            expertSystem.GetDomains().Add(domainName6, domain6);
+            expertSystem.GetDomains().Add(domainName7, domain7);
+            #endregion
+
+            #region переменные
+            string variableName1 = "Угроза";
+            Variable variable1 = new(
+                variableName1,
+                domain1,
                 VariableType.Deducted
             );
 
-            expertSystem.GetDomains().Add(domainNameThreat, domainThreat);
-            expertSystem.GetDomains().Add(domainNameYesNo, domainYesNo);
+            string variableName2 = "Источник угрозы";
+            Variable variable2 = new(
+                variableName2,
+                domain3,
+                VariableType.Deducted
+            );
 
-            expertSystem.GetVariables().Add(variableNameThreat, variableThreat);
-            */
+            string variableName3 = "Объект воздействия";
+            Variable variable3 = new(
+                variableName3,
+                domain4,
+                VariableType.Deducted
+            );
+
+            string variableName4 = "Последствие реализации угрозы";
+            Variable variable4 = new(
+                variableName4,
+                domain5,
+                VariableType.Deducted
+            );
+
+            string variableName5 = "Возможность внедрения вредоностного кода";
+            Variable variable5 = new(
+                variableName5,
+                domain2,
+                VariableType.Queried
+            );
+            variable5.SetQuestion("Есть возможность внедрения вредоностного кода?");
+
+            string variableName6 = "Уровень автоматизации";
+            Variable variable6 = new(
+                variableName6,
+                domain6,
+                VariableType.Queried
+            );
+            variable6.SetQuestion("Какой уровень автоматизации?");
+
+            string variableName7 = "Канал сети Интернет";
+            Variable variable7 = new(
+                variableName7,
+                domain7,
+                VariableType.Queried
+            );
+            variable7.SetQuestion("Какой канал сети?");
+
+            string variableName8 = "Возможность перехвата";
+            Variable variable8 = new(
+                variableName8,
+                domain2,
+                VariableType.Queried
+            );
+            variable8.SetQuestion("Есть возможность перехвата?");
+
+            string variableName9 = "Сведения о применяемых алгоритмах";
+            Variable variable9 = new(
+                variableName9,
+                domain2,
+                VariableType.Queried
+            );
+            variable9.SetQuestion("Есть открытая информация о применяемых алгоритмах шифрования?");
+
+            string variableName10 = "Новый алгоритм шифрования";
+            Variable variable10 = new(
+                variableName10,
+                domain2,
+                VariableType.Queried
+            );
+            variable10.SetQuestion("Используется ли новый алгоритм шифрования?");
+
+            expertSystem.GetVariables().Add(variableName1, variable1);
+            expertSystem.GetVariables().Add(variableName2, variable2);
+            expertSystem.GetVariables().Add(variableName3, variable3);
+            expertSystem.GetVariables().Add(variableName4, variable4);
+            expertSystem.GetVariables().Add(variableName5, variable5);
+            expertSystem.GetVariables().Add(variableName6, variable6);
+            expertSystem.GetVariables().Add(variableName7, variable7);
+            expertSystem.GetVariables().Add(variableName8, variable8);
+            expertSystem.GetVariables().Add(variableName9, variable9);
+            expertSystem.GetVariables().Add(variableName10, variable10);
+            #endregion
+
+            #region правила
+            Rule P1 = new(
+                name: "П1",
+                argumentation: "Угроза заключается в возможности внедрения и запуска вредоносного кода от имени доверенного процесса на любом из ресурсных центров грид-системы и его автоматического распространения на все узлы грид-системы. Данная угроза обусловлена слабостями технологии грид-вычислений – высоким уровнем автоматизации при малой администрируемости грид-системы. Реализация данной угрозы возможна при условии наличия у нарушителя привилегий легального пользователя грид-системы",
+                causes: new List<Fact>()
+                {
+                    new Fact(variable5, "Да", RightlyType.Unknown),
+                    new Fact(variable6, "Высокий", RightlyType.Unknown),
+                },
+                result: new Fact(variable1, "УБИ.001: Угроза автоматического распространения вредоносного кода в грид-системе", RightlyType.Unknown)
+            );
+
+            Rule P2 = new(
+                name: "П2",
+                argumentation: "Угроза заключается в возможности раскрытия нарушителем защищаемой информации путём выявления задействованных в её обработке узлов, сбора, анализа и обобщения данных, перехватываемых в сети передачи данных грид-системы. Данная угроза обусловлена слабостью технологии грид-вычислений – использованием незащищённых каналов сети Интернет как транспортной сети грид-системы.Реализация данной угрозы возможна при условии наличия у нарушителя: сил и средств, достаточных для компенсации чрезвычайной распределённости грид-заданий между узлами грид-системы; привилегий, достаточных для перехвата трафика сети передачи данных между элементами (узлами) грид-системы",
+                causes: new List<Fact>()
+                {
+                    new Fact(variable8, "Да", RightlyType.Unknown),
+                    new Fact(variable7, "Не защищённый", RightlyType.Unknown),
+                },
+                result: new Fact(variable1, "УБИ.002: Угроза агрегирования данных, передаваемых в грид-системе", RightlyType.Unknown)
+            );
+
+            Rule P3 = new(
+                name: "П3",
+                argumentation: "Угроза заключается в возможности выявления слабых мест в криптографических алгоритмах или уязвимостей в реализующем их программном обеспечении. Данная угроза обусловлена слабостями криптографических алгоритмов, а также ошибками в программном коде криптографических средств, их сопряжении с системой или параметрах их настройки. Реализация угрозы возможна в случае наличия у нарушителя сведений об применяемых в системе средствах шифрования, реализованных в них алгоритмах шифрования и параметрах их настройки",
+                causes: new List<Fact>()
+                {
+                    new Fact(variable10, "Нет", RightlyType.Unknown),
+                    new Fact(variable9, "Да", RightlyType.Unknown),
+                },
+                result: new Fact(variable1, "УБИ.003: Угроза использования слабостей криптографических алгоритмов и уязвимостей в программном обеспечении их реализации", RightlyType.Unknown)
+            );
+
+            expertSystem.GetRules().Add(P1.GetRuleName(), P1);
+            expertSystem.GetRules().Add(P2.GetRuleName(), P2);
+            expertSystem.GetRules().Add(P3.GetRuleName(), P3);
+            #endregion
+
             return expertSystem;
         }
 
@@ -260,7 +262,7 @@ namespace ExpertSystemCourseWork
 
             if (variableName == string.Empty) { return; }
 
-            Variable variable = (Variable)m_expertSystem.GetVariables()[variableName]!;
+            Variable variable = m_expertSystem.GetVariables()[variableName]!;
 
             #region имя переменной
             VariableNameTextBox.Text = variableName;
@@ -802,6 +804,7 @@ namespace ExpertSystemCourseWork
         }
         #endregion
 
+        #region Консультация, формирование прогноза
         private void StartConsultationButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -820,9 +823,22 @@ namespace ExpertSystemCourseWork
                     Fact result = StartConsult();
 
                     MessageBox.Show((result.GetRightlyType() == RightlyType.Unknown)
-                        ? "Экспертиза не в состоянии помочь("
+                        ? (m_expertSystem.GetTarget().GetName() == "Угроза") 
+                            ? "Угроз не обнаружено, обязательно посмотрите прогноз по каждой из угроз!"
+                            : "Не удалось найти истину :("
                         : result.ToString()
                     );
+
+                    PrognosisTextBox.Text = string.Empty;
+
+                    if (m_expertSystem.GetTarget().GetName() == "Угроза")
+                    {
+                        UpdatePrognosis();
+                    }
+                    else
+                    {
+                        PrognosisTextBox.Text = "Для прогноза необходимо установить цель - Угроза";
+                    }
                 }
             }
             catch (DomainException de)
@@ -834,6 +850,7 @@ namespace ExpertSystemCourseWork
                 MessageBox.Show("Неизвестная ошибка!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
         private Fact StartConsult()
         {
             m_expertSystem.ClearProvedFacts();
@@ -932,10 +949,83 @@ namespace ExpertSystemCourseWork
             }
 
             rule.SetWorkedType(RuleWorkType.Unsignify);
-            //m_expertSystem.GetWorkedRules().Add(rule);
+            m_expertSystem.GetWorkedRules().Add(rule);
             UpdateWorkedRulesLayout();
 
             return RightlyType.Unknown;
         }
+
+        private void UpdatePrognosis()
+        {
+            string result = "";
+
+            foreach (Rule rule in m_expertSystem.GetRules().Values.ToList().FindAll(rule => rule.GetResult()!.GetVariable().GetName() == "Угроза"))
+            {
+                List<Fact> facts = GetNeededFactToProve(rule);
+                double countNeededFacts = facts.Count;
+                double countProvedFacts = 0;
+
+                string substr = "";
+                foreach (Fact checkFact in facts)
+                {
+                    if (Fact.ContainsIn(checkFact, m_expertSystem.GetProvedFacts()))
+                    {
+                        if (m_expertSystem.GetProvedFacts().Find(provedFact => (checkFact.GetVariable() == provedFact.GetVariable()) && (checkFact.GetValue() == provedFact.GetValue()))!.GetRightlyType() == RightlyType.Yes)
+                        {
+                            countProvedFacts++;
+                            substr += $"""
+                                {checkFact.GetVariable().GetName()} - Обратите внимание!{System.Environment.NewLine}
+                            """;
+                        }
+                        else
+                        {
+                            substr += $"""
+                                {checkFact.GetVariable().GetName()} - ОК {System.Environment.NewLine}
+                            """;
+                        }
+                    }
+                    else
+                    {
+                        substr += $"""
+                                {checkFact.GetVariable().GetName()} - Нет данных {System.Environment.NewLine}
+                            """;
+                    }
+                }
+
+                double threatPercentage = Math.Round((countProvedFacts / countNeededFacts) * 100);
+
+                result += $"""
+                   {rule.GetResult()!.GetValue().Split(':')[0]} - вероятность угрозы: {threatPercentage}%
+                   {substr}
+                   """;
+            }
+
+            PrognosisTextBox.Text = result;
+        }
+
+        private List<Fact> GetNeededFactToProve(Rule parseRule)
+        {
+            List <Fact> facts = new();
+            foreach (Fact causesFact in parseRule.GetCauses())
+            {
+                if (causesFact.GetVariable().GetVariableType() == VariableType.Queried)
+                {
+                    facts.Add(causesFact);
+                }
+                else
+                {
+                    foreach (Rule rule in m_expertSystem.GetRules().Values.ToList().FindAll(r => r.GetResult()!.GetVariable().GetName() == causesFact.GetVariable().GetName()))
+                    {
+                        foreach(Fact f in GetNeededFactToProve(rule))
+                        {
+                            facts.Add(f);
+                        }
+                    }
+                }
+            }
+
+            return facts;
+        }
+        #endregion
     }
 }

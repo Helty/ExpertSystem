@@ -22,6 +22,15 @@ namespace ExpertSystemCourseWork.domain
             m_workType = RuleWorkType.No;
         }
 
+        public Rule(string name, string argumentation, List<Fact> causes, Fact result)
+        {
+            m_name = name;
+            m_argumentation = argumentation;
+            m_causes = causes;
+            m_result = result;
+            m_workType = RuleWorkType.No;
+        }
+
         public List<Fact> GetCauses()
         {
             return m_causes;

@@ -30,38 +30,14 @@ namespace ExpertSystemCourseWork.domain
             return m_name;
         }
 
-        public void SetName(string newName)
-        {
-            if (newName != m_name)
-            {
-                m_name = newName;
-            }
-        }
-
         public Domain GetDomain()
         {
             return m_domain;
         }
 
-        public void SetDomain(Domain newDomain)
-        {
-            if (newDomain != m_domain)
-            {
-                m_domain = newDomain;
-            }
-        }
-
         public VariableType GetVariableType()
         {
             return m_variableType;
-        }
-
-        public void SetVariableType(VariableType newVariableType)
-        {
-            if (newVariableType != m_variableType)
-            {
-                m_variableType = newVariableType;
-            }
         }
 
         public string? GetQuestion()

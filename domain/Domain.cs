@@ -26,14 +26,6 @@ namespace ExpertSystemCourseWork.domain
             return m_valueList;
         }
 
-        public void SetValueList(List<string> newValueList)
-        {
-            if (newValueList != m_valueList)
-            {
-                m_valueList = newValueList;
-            }
-        }
-
         public int GetValueCount()
         {
             return m_valueList.Count;
@@ -44,14 +36,6 @@ namespace ExpertSystemCourseWork.domain
             return m_name;
         }
 
-        public void SetName(string newName)
-        {
-            if (newName != m_name)
-            {
-                m_name = newName;
-            }
-        }
-
         public string GetValue(int position)
         {
             if ((position > m_valueList.Count - 1) || (position < 0))
@@ -59,20 +43,6 @@ namespace ExpertSystemCourseWork.domain
                 throw new DomainException("Индекс находился вне границ списка значений");
             }
             return m_valueList[position];
-        }
-
-        public void InsertValue(string value, int position)
-        {
-            if (!m_valueList.Contains(value))
-            {
-                if ((position > m_valueList.Count) || (position < 0))
-                {
-                    throw new DomainException("Индекс находился вне границ списка значений");
-                }
-
-                m_valueList.Add(value);
-                Move(m_valueList.Count - 1, position);
-            }
         }
 
         public void Move(int oldPosition, int newPosition)
@@ -102,41 +72,9 @@ namespace ExpertSystemCourseWork.domain
             m_valueList[newPosition] = oldValue;
         }
 
-        public void Move(string value, int newPosition)
-        {
-            if (!m_valueList.Contains(value))
-            {
-                throw new DomainException("Список значений не содержит требуемого элемента");
-            }
-            Move(m_valueList.IndexOf(value), newPosition);
-        }
-
-        public void Remove(int position)
-        {
-            if ((position > m_valueList.Count - 1) || (position < 0))
-            {
-                throw new DomainException("Индекс находился вне границ списка значений");
-            }
-            m_valueList.RemoveAt(position);
-        }
-
-        public void Remove(string value)
-        {
-            if (!m_valueList.Contains(value))
-            {
-                throw new DomainException("Список значений не содержит требуемого элемента");
-            }
-            m_valueList.Remove(value);
-        }
-
         public bool IsExistValue(string value)
         {
             return m_valueList.Contains(value);
-        }
-
-        public int IndexOf(string value)
-        {
-            return m_valueList.IndexOf(value);
         }
 
         public override string ToString()

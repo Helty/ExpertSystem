@@ -7,7 +7,6 @@ namespace ExpertSystemCourseWork.domain
     {
         private string m_name;
         private string m_argumentation;
-
         private List<Fact> m_causes;
         private Fact? m_result;
         private RuleWorkType m_workType;
@@ -36,12 +35,13 @@ namespace ExpertSystemCourseWork.domain
             return m_causes;
         }
 
-        public void SetCauses(List<Fact> newCauses)
+        public Fact GetCause(int position)
         {
-            if (newCauses != m_causes)
+            if ((position > m_causes.Count - 1) || (position < 0))
             {
-                m_causes = newCauses;
+                throw new RuleException("Индекс находился вне границ списка посылок");
             }
+            return m_causes[position];
         }
 
         public RuleWorkType GetWorkedType()
@@ -96,18 +96,9 @@ namespace ExpertSystemCourseWork.domain
             }
         }
 
-        public Fact GetCause(int position)
-        {
-            if ((position > m_causes.Count - 1) || (position < 0))
-            {
-                throw new RuleException("Индекс находился вне границ списка посылок");
-            }
-            return m_causes[position];
-        }
-
         public void InsertCause(Fact fact, int position)
         {
-            if (!Contains(fact))
+            if (!IsFactContainsInCauses(fact))
             {
                 if ((position < 0) || (position > m_causes.Count))
                 {
@@ -124,7 +115,41 @@ namespace ExpertSystemCourseWork.domain
             return m_causes.Count;
         }
 
-        public void Move(int oldPosition, int newPosition)
+        public override string ToString()
+        {
+            if (m_causes.Count > 0)
+            {
+                string start = m_name + ": ЕСЛИ ";
+                for (int i = 0; i < m_causes.Count - 1; i++)
+                {
+                    start += "(" + m_causes[i].ToString() + ") И ";
+                }
+                start += "(" + m_causes[m_causes.Count - 1] + ") ТОГДА ";
+                if (m_result != null)
+                {
+                    start += m_result.ToString();
+                }
+                return start;
+            }
+            else
+            {
+                return m_name + ": ";
+            }
+        }
+
+        private bool IsFactContainsInCauses(Fact fact)
+        {
+            foreach (Fact f in m_causes)
+            {
+                if (f.CompareTo(fact) == 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void Move(int oldPosition, int newPosition)
         {
             if ((oldPosition > m_causes.Count - 1) ||
                 (newPosition > m_causes.Count - 1) ||
@@ -149,86 +174,6 @@ namespace ExpertSystemCourseWork.domain
                 }
             }
             m_causes[newPosition] = oldReason;
-        }
-
-        public void Move(Fact fact, int newPosition)
-        {
-            if (!Contains(fact))
-            {
-                throw new RuleException("Запрашиваемая посылка не найдена");
-            }
-            Move(IndexOf(fact), newPosition);
-        }
-
-        public void Remove(int position)
-        {
-            if ((position > m_causes.Count - 1) || (position < 0))
-            {
-                throw new RuleException("Индекс находился вне границ списка посылок");
-            }
-
-            if (m_causes.Count == 1)
-            {
-                throw new RuleException("Попытка удалить едиственную посылку в правиле");
-            }
-
-            m_causes.RemoveAt(position);
-        }
-
-        public void Remove(Fact fact)
-        {
-            if (!Contains(fact))
-            {
-                if (m_causes.Count == 1)
-                {
-                    throw new RuleException("Попытка удалить едиственную посылку в правиле");
-                }
-                m_causes.RemoveAt(IndexOf(fact));
-            }
-        }
-
-        public bool Contains(Fact fact)
-        {
-            foreach (Fact f in m_causes)
-            {
-                if (f.CompareTo(fact) == 0)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public int IndexOf(Fact fact)
-        {
-            for (int reasonPos = 0; reasonPos < m_causes.Count; reasonPos++)
-            {
-                if (m_causes[reasonPos].CompareTo(fact) == 0)
-                    return reasonPos;
-            }
-            return -1;
-        }
-
-        public override string ToString()
-        {
-            if (m_causes.Count > 0)
-            {
-                string start = m_name + ": ЕСЛИ ";
-                for (int i = 0; i < m_causes.Count - 1; i++)
-                {
-                    start += "(" + m_causes[i].ToString() + ") И ";
-                }
-                start += "(" + m_causes[m_causes.Count - 1] + ") ТОГДА ";
-                if (m_result != null)
-                {
-                    start += m_result.ToString();
-                }
-                return start;
-            }
-            else
-            {
-                return m_name + ": ";
-            }
         }
     }
 }

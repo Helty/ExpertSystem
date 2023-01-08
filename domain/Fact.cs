@@ -67,11 +67,6 @@ namespace ExpertSystemCourseWork.domain
             }
         }
 
-        public override string ToString()
-        {
-            return m_variable.GetName() + " = " + m_value;
-        }
-
         public int CompareTo(Fact fact)
         {
             int isCompareVariable = m_variable.CompareTo(fact.GetVariable());
@@ -81,7 +76,12 @@ namespace ExpertSystemCourseWork.domain
                 : m_value.CompareTo(fact.GetValue());
         }
 
-        internal static bool ContainsIn(Fact fact, List<Fact> facts)
+        public override string ToString()
+        {
+            return m_variable.GetName() + " = " + m_value;
+        }
+
+        internal static bool IsFactContains(Fact fact, List<Fact> facts)
         {
             foreach (Fact sameFact in facts)
             {
@@ -93,7 +93,7 @@ namespace ExpertSystemCourseWork.domain
             return false;
         }
 
-        internal static Fact? GetFromList(Fact fact, List<Fact> facts)
+        internal static Fact? GetFactFromFacts(Fact fact, List<Fact> facts)
         {
             foreach (Fact sameFact in facts)
             {

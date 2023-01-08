@@ -905,7 +905,7 @@ namespace ExpertSystemCourseWork
 
             foreach (Fact causeFact in rule.GetCauses())
             {
-                if (!Fact.ContainsIn(causeFact, m_expertSystem.GetProvedFacts()))
+                if (!Fact.IsFactContains(causeFact, m_expertSystem.GetProvedFacts()))
                 {
                     Fact fact = Consult(causeFact.GetVariable());
                     m_expertSystem.GetProvedFacts().Add(fact);
@@ -922,7 +922,7 @@ namespace ExpertSystemCourseWork
                 }
                 else
                 {
-                    Fact fact = Fact.GetFromList(causeFact, m_expertSystem.GetProvedFacts())!;
+                    Fact fact = Fact.GetFactFromFacts(causeFact, m_expertSystem.GetProvedFacts())!;
                     isFactTrue = (fact.GetRightlyType() == RightlyType.Yes);
                 }
 
@@ -968,7 +968,7 @@ namespace ExpertSystemCourseWork
                 string substr = "";
                 foreach (Fact checkFact in facts)
                 {
-                    if (Fact.ContainsIn(checkFact, m_expertSystem.GetProvedFacts()))
+                    if (Fact.IsFactContains(checkFact, m_expertSystem.GetProvedFacts()))
                     {
                         if (m_expertSystem.GetProvedFacts().Find(provedFact => (checkFact.GetVariable() == provedFact.GetVariable()) && (checkFact.GetValue() == provedFact.GetValue()))!.GetRightlyType() == RightlyType.Yes)
                         {

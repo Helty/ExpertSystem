@@ -72,36 +72,13 @@ namespace ExpertSystemCourseWork.domain
         {
             return m_domains;
         }
-        public void SetDomains(Dictionary<string, Domain> newDomains)
-        {
-            if (newDomains != m_domains)
-            {
-                m_domains = newDomains;
-            }
-        }
-
         public Dictionary<string, Variable> GetVariables()
         {
             return m_variables;
         }
-        public void SetVariables(Dictionary<string, Variable> newVariables)
-        {
-            if (newVariables != m_variables)
-            {
-                m_variables = newVariables;
-            }
-        }
-
         public Dictionary<string, Rule> GetRules()
         {
             return m_rules;
-        }
-        public void SetRules(Dictionary<string, Rule> newRules)
-        {
-            if (newRules != m_rules)
-            {
-                m_rules = newRules;
-            }
         }
 
         public void ClearProvedFacts()
